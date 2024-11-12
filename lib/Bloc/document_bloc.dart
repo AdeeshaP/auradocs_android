@@ -36,5 +36,37 @@ class DocumentBloc extends Bloc<DocumentEvent, DocumentState> {
         emit(DocumentError("An unexpected error occurred: $e"));
       }
     });
+
+    on<FetchFavoriteDocs>((event, emit) async {
+      emit(DocumentLoading());
+      try {
+        var bookmarkResponse =
+            await ApiService.getBookmarkList(event.username, event.token);
+
+        print("bookmarkResponse.statusCode ${bookmarkResponse.statusCode}");
+
+        if (bookmarkResponse.statusCode == 200) {
+          var responsedata = jsonDecode(bookmarkResponse.body);
+          List<dynamic> documents = responsedata?['value'] ?? [];
+          int totalPages = (documents.length / 4).ceil();
+
+          emit(PartialFavoriteListLoaded(
+                  bookmarks: responsedata['value'], totalPages: totalPages)
+              .mergeWith(state is FavoriteListLoaded
+                  ? state as FavoriteListLoaded
+                  : FavoriteListLoaded()));
+        } else if (bookmarkResponse.statusCode == 404) {
+          emit(PartialFavoriteListLoaded(bookmarks: null).mergeWith(
+              state is FavoriteListLoaded
+                  ? state as FavoriteListLoaded
+                  : FavoriteListLoaded()));
+        } else if (bookmarkResponse.statusCode == 500) {
+          emit(
+              DocumentError("Server error! Please contact the administrator."));
+        }
+      } catch (e) {
+        emit(DocumentError("An unexpected error occurred: $e"));
+      }
+    });
   }
 }

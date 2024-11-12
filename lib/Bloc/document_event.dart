@@ -7,3 +7,10 @@ class FetchSharedWithMeDocs extends DocumentEvent {
 
   FetchSharedWithMeDocs(this.username, this.token);
 }
+
+class FetchFavoriteDocs extends DocumentEvent {
+  final String username;
+  final String token;
+
+  FetchFavoriteDocs(this.username, this.token);
+}

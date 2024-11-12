@@ -27,6 +27,31 @@ class SharedDocumentLoaded extends DocumentState {
   SharedDocumentLoaded({this.sharedDocs});
 }
 
+// PartialFavoriteListLoaded state to only update specific fields for favourite docs
+
+class PartialFavoriteListLoaded extends DocumentState {
+  final List<dynamic>? bookmarks;
+  final int? totalPages;
+  PartialFavoriteListLoaded({
+    this.bookmarks,
+    this.totalPages,
+  });
+
+  FavoriteListLoaded mergeWith(FavoriteListLoaded existingState) {
+    return FavoriteListLoaded(
+      bookmarks: bookmarks ?? existingState.bookmarks,
+      totalPages: totalPages ?? existingState.totalPages,
+    );
+  }
+}
+
+class FavoriteListLoaded extends DocumentState {
+  final List<dynamic>? bookmarks;
+  final int? totalPages;
+
+  FavoriteListLoaded({this.bookmarks, this.totalPages});
+}
+
 class DocumentError extends DocumentState {
   final String message;
 
