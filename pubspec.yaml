@@ -49,6 +49,19 @@ dependencies:
   local_auth: ^2.3.0
   font_awesome_flutter: ^10.8.0
   document_scanner_flutter: ^0.2.7
+  image_picker: ^1.1.2
+  file_picker: ^8.1.4
+  csv: ^6.0.0
+  flutter_html: ^3.0.0-beta.2
+  chewie: ^1.8.5
+  video_player: ^2.9.2
+  syncfusion_flutter_pdfviewer: ^27.1.58
+  flutter_tesseract_ocr: ^0.4.26
+  audioplayers: ^6.1.0
+  full_screen_image: ^2.0.0
+  share_handler: ^0.0.22
+  permission_handler: ^11.3.1
+  camera: ^0.11.0+2
 
 dev_dependencies:
   flutter_test:

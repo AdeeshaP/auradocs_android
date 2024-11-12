@@ -124,6 +124,95 @@ showPendingDocIndexedSuccesfullyPopup(BuildContext context, String imagePath,
   );
 }
 
+
+// -------------- last Docuent Submit Popup ----------------//
+lastDocuentSubmitPopup(BuildContext context, String message, String imagePath,
+    Widget yesDestination, Color color, String un, String token) {
+  Widget okButton = TextButton(
+    child: Text(
+      "OK",
+      style: GoogleFonts.lato(
+        textStyle: Theme.of(context).textTheme.bodyMedium,
+        fontSize: 15,
+        fontWeight: FontWeight.w700,
+        color: Colors.white,
+      ),
+      textScaler: TextScaler.linear(1),
+    ),
+    style: ButtonStyle(
+      backgroundColor: WidgetStateProperty.all(color),
+      shape: WidgetStateProperty.all(
+        RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5),
+        ),
+      ),
+    ),
+    onPressed: () async {
+      Navigator.of(context, rootNavigator: true).pop('dialog');
+      // Navigator.pushReplacement(
+      //   context,
+      //   MaterialPageRoute(builder: (context) {
+      //     return BlocProvider(
+      //         create: (context) => DocumentBloc(un, token),
+      //         child: yesDestination);
+      //   }),
+      // );
+    },
+  );
+
+  // show the dialog
+  return showGeneralDialog(
+    context: context,
+    barrierDismissible: true,
+    barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+    barrierColor: Colors.black45,
+    pageBuilder: (BuildContext buildContext, Animation animation,
+        Animation secondaryAnimation) {
+      return Center(
+        child: Container(
+          width: MediaQuery.of(context).size.width * 0.84,
+          height: MediaQuery.of(context).size.height * 0.38,
+          padding: EdgeInsets.fromLTRB(30, 15, 30, 10),
+          color: Color.fromARGB(255, 218, 216, 216),
+          child: Column(
+            children: <Widget>[
+              SizedBox(height: 10),
+              Image.asset(
+                imagePath,
+                width: 80,
+                height: 80,
+                alignment: Alignment.centerLeft,
+              ),
+              SizedBox(height: 20),
+              Text(
+                textAlign: TextAlign.center,
+                message,
+                style: TextStyle(
+                    decoration: TextDecoration.none,
+                    color: Colors.black,
+                    height: 1.4,
+                    fontSize: 19,
+                    fontFamily: "open sans",
+                    fontWeight: FontWeight.w500),
+                textScaler: TextScaler.linear(1),
+              ),
+              SizedBox(height: 20),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  width: 100,
+                  child: okButton,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+
 // -------------- Location Popup ----------------//
 showWarningDialogPopup(BuildContext context, IconData icon, String message,
     Function okHandler, Color color) {
