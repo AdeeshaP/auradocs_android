@@ -5,6 +5,10 @@ class DocumentInitial extends DocumentState {}
 
 class DocumentLoading extends DocumentState {}
 
+class DocumentCountLoading extends DocumentState {}
+
+class WFDashboardCountLoading extends DocumentState {}
+
 // PartialSharedDocumentLoaded state to only update specific fields for shared docs
 
 class PartialSharedDocumentLoaded extends DocumentState {
@@ -97,6 +101,71 @@ class TemplateDropdownLoaded extends DocumentState {
   final List<String> dropdownValues;
 
   TemplateDropdownLoaded({required this.values, required this.dropdownValues});
+}
+
+// PartialSignListLoaded state to only update specific fields for signed docs
+
+class PartialSignListLoaded extends DocumentState {
+  final List<dynamic>? signDocs;
+  final int? totalPages;
+
+  PartialSignListLoaded({
+    this.signDocs,
+    this.totalPages,
+  });
+
+  SignListLoaded mergeWith(SignListLoaded existingState) {
+    return SignListLoaded(
+      signDocs: signDocs ?? existingState.signDocs,
+      totalPages: totalPages ?? existingState.totalPages,
+    );
+  }
+}
+
+class SignListLoaded extends DocumentState {
+  final List<dynamic>? signDocs;
+  final int? totalPages;
+
+  SignListLoaded({this.signDocs, this.totalPages});
+}
+
+// PartialDocumentLoaded state to only update specific fields for history tables
+
+class PartialHistoryLoaded extends DocumentState {
+  final List? accountHistory;
+  final List? indexHistory;
+  final List? downloadHistory;
+  final List? todoHistory;
+
+  PartialHistoryLoaded({
+    this.accountHistory,
+    this.indexHistory,
+    this.downloadHistory,
+    this.todoHistory,
+  });
+
+  HistoryLoaded mergeWith(HistoryLoaded existingState) {
+    return HistoryLoaded(
+      accountHistory: accountHistory ?? existingState.accountHistory,
+      indexHistory: indexHistory ?? existingState.indexHistory,
+      downloadHistory: downloadHistory ?? existingState.downloadHistory,
+      todoHistory: todoHistory ?? existingState.todoHistory,
+    );
+  }
+}
+
+class HistoryLoaded extends DocumentState {
+  final List<dynamic>? accountHistory;
+  final List<dynamic>? indexHistory;
+  final List<dynamic>? downloadHistory;
+  final List<dynamic>? todoHistory;
+
+  HistoryLoaded({
+    this.accountHistory,
+    this.indexHistory,
+    this.downloadHistory,
+    this.todoHistory,
+  });
 }
 
 class DocumentError extends DocumentState {

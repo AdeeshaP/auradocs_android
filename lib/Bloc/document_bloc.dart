@@ -178,5 +178,148 @@ class DocumentBloc extends Bloc<DocumentEvent, DocumentState> {
         emit(DocumentError("An error occurred: $e"));
       }
     });
+    on<FetchSignDocuments>((event, emit) async {
+      emit(DocumentLoading());
+      try {
+        var response =
+            await ApiService.getDocumentListToSign(event.token, event.username);
+        if (response.statusCode == 200) {
+          var responsedata = jsonDecode(response.body);
+          List<dynamic> documents = responsedata?['value'] ?? [];
+          int totalPages = (documents.length / 7).ceil();
+
+          emit(PartialSignListLoaded(
+                  signDocs: responsedata['value'], totalPages: totalPages)
+              .mergeWith(state is SignListLoaded
+                  ? state as SignListLoaded
+                  : SignListLoaded()));
+        } else if (response.statusCode == 404) {
+          // emit(DocumentError("No documents to sign."));
+          emit(PartialSignListLoaded(signDocs: null).mergeWith(
+              state is SignListLoaded
+                  ? state as SignListLoaded
+                  : SignListLoaded()));
+        } else if (response.statusCode == 500) {
+          emit(
+              DocumentError("Server error! Please contact the administrator."));
+        }
+      } catch (e) {
+        emit(DocumentError("An unexpected error occurred: $e"));
+      }
+    });
+
+    on<FetchAccountHistory>((event, emit) async {
+      emit(DocumentLoading());
+      try {
+        var accountHstoryResponse =
+            await ApiService.getAccountHistory(event.username, event.token);
+        print(
+            "getAccountHistory.statusCode ${accountHstoryResponse.statusCode}");
+
+        if (accountHstoryResponse.statusCode == 200) {
+          var responsedata = jsonDecode(accountHstoryResponse.body);
+
+          emit(PartialHistoryLoaded(accountHistory: responsedata['value'])
+              .mergeWith(state is HistoryLoaded
+                  ? state as HistoryLoaded
+                  : HistoryLoaded()));
+        } else if (accountHstoryResponse.statusCode == 404) {
+          emit(PartialHistoryLoaded(accountHistory: null).mergeWith(
+              state is HistoryLoaded
+                  ? state as HistoryLoaded
+                  : HistoryLoaded()));
+        } else if (accountHstoryResponse.statusCode == 500) {
+          emit(
+              DocumentError("Server error! Please contact the administrator."));
+        }
+      } catch (e) {
+        emit(DocumentError("An unexpected error occurred: $e"));
+      }
+    });
+
+    on<FetchIndexHistory>((event, emit) async {
+      emit(DocumentLoading());
+      try {
+        var indexHistoryResponse =
+            await ApiService.getIndexHistory(event.username, event.token);
+        print("getIndexHistory.statusCode ${indexHistoryResponse.statusCode}");
+
+        if (indexHistoryResponse.statusCode == 200) {
+          var responsedata = jsonDecode(indexHistoryResponse.body);
+
+          emit(PartialHistoryLoaded(indexHistory: responsedata['value'])
+              .mergeWith(state is HistoryLoaded
+                  ? state as HistoryLoaded
+                  : HistoryLoaded()));
+        } else if (indexHistoryResponse.statusCode == 404) {
+          // emit(DocumentError("No data ."));
+          emit(PartialHistoryLoaded(indexHistory: null).mergeWith(
+              state is HistoryLoaded
+                  ? state as HistoryLoaded
+                  : HistoryLoaded()));
+        } else if (indexHistoryResponse.statusCode == 500) {
+          emit(
+              DocumentError("Server error! Please contact the administrator."));
+        }
+      } catch (e) {
+        emit(DocumentError("An unexpected error occurred: $e"));
+      }
+    });
+
+    on<FetchToDoHistory>((event, emit) async {
+      emit(DocumentLoading());
+      try {
+        var toDoHistoryResponse =
+            await ApiService.getToDoHistory(event.username, event.token);
+        print("getToDoHistory.statusCode ${toDoHistoryResponse.statusCode}");
+
+        if (toDoHistoryResponse.statusCode == 200) {
+          var responsedata = jsonDecode(toDoHistoryResponse.body);
+
+          emit(PartialHistoryLoaded(todoHistory: responsedata['value'])
+              .mergeWith(state is HistoryLoaded
+                  ? state as HistoryLoaded
+                  : HistoryLoaded()));
+        } else if (toDoHistoryResponse.statusCode == 404) {
+          emit(PartialHistoryLoaded(todoHistory: null).mergeWith(
+              state is HistoryLoaded
+                  ? state as HistoryLoaded
+                  : HistoryLoaded()));
+        } else if (toDoHistoryResponse.statusCode == 500) {
+          emit(
+              DocumentError("Server error! Please contact the administrator."));
+        }
+      } catch (e) {
+        emit(DocumentError("An unexpected error occurred: $e"));
+      }
+    });
+
+    on<FetchDownloadHistory>((event, emit) async {
+      emit(DocumentLoading());
+      try {
+        var downloadHistoryResponse =
+            await ApiService.getDownloadHistory(event.username, event.token);
+        print(
+            "getDownloadHistory.statusCode ${downloadHistoryResponse.statusCode}");
+
+        if (downloadHistoryResponse.statusCode == 200) {
+          var responsedata = jsonDecode(downloadHistoryResponse.body);
+          emit(PartialHistoryLoaded(downloadHistory: responsedata['value'])
+              .mergeWith(state is HistoryLoaded
+                  ? state as HistoryLoaded
+                  : HistoryLoaded()));
+        } else if (downloadHistoryResponse.statusCode == 404) {
+          emit(PartialHistoryLoaded(downloadHistory: null).mergeWith(
+              state is HistoryLoaded
+                  ? state as HistoryLoaded
+                  : HistoryLoaded()));
+        } else if (downloadHistoryResponse.statusCode == 500) {
+          emit(
+              DocumentError("Server error! Please contact the administrator."));
+        }
+      } catch (e) {
+        emit(DocumentError("An unexpected error occurred: $e"));
+      }
+    });
   }
 }

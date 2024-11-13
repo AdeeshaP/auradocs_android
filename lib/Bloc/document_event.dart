@@ -46,3 +46,38 @@ class FetchTemplateDropdown extends DocumentEvent {
 
   FetchTemplateDropdown(this.username, this.token);
 }
+
+class FetchSignDocuments extends DocumentEvent {
+  final String username;
+  final String token;
+
+  FetchSignDocuments(this.username, this.token);
+}
+
+class FetchIndexHistory extends DocumentEvent {
+  final String username;
+  final String token;
+
+  FetchIndexHistory(this.username, this.token);
+}
+
+class FetchAccountHistory extends DocumentEvent {
+  final String username;
+  final String token;
+
+  FetchAccountHistory(this.username, this.token);
+}
+
+class FetchDownloadHistory extends DocumentEvent {
+  final String username;
+  final String token;
+
+  FetchDownloadHistory(this.username, this.token);
+}
+
+class FetchToDoHistory extends DocumentEvent {
+  final String username;
+  final String token;
+
+  FetchToDoHistory(this.username, this.token);
+}

@@ -321,42 +321,6 @@ class _PendingDocumentsViewerState extends State<PendingDocumentsViewer> {
     }
   }
 
-  // --------GET API -  Dropdown list for templates -------------//
-
-  // Future<void> getTemplatesDropdown() async {
-  //   _storage = await SharedPreferences.getInstance();
-  //   userObj = jsonDecode(_storage.getString('user_data')!);
-  //   token = _storage.getString('token')!;
-
-  //   setState(() {
-  //     username = userObj!["value"]["userName"];
-  //   });
-
-  //   var response2 = await ApiService.getAvalableTemplatesLists(username, token);
-  //   var templatelist = jsonDecode(response2.body);
-
-  //   if (!mounted) return;
-  //   setState(() {
-  //     values = List<Map<String, dynamic>>.from(templatelist['value']);
-  //     dropdownValues = values!.map((e) => e.values.first.toString()).toList();
-  //   });
-  // }
-
-  //--------GET API -  Dropdown list for Users -------------//
-
-  // Future<void> getUsernamesDropdown() async {
-  //   _storage = await SharedPreferences.getInstance();
-  //   token = _storage.getString('token')!;
-
-  //   var response3 = await ApiService.getUserNames(token);
-  //   var userlist = jsonDecode(response3.body);
-
-  //   setState(() {
-  //     List<dynamic> values = userlist['value'];
-  //     userNames = values.map((item) => item[0].toString()).toSet().toList();
-  //   });
-  // }
-
 // -------- GET API - Textfields for selected template item -------------//
 
   Future<List<String>> getTextFieldsForSelectedTemplate(
@@ -2428,18 +2392,6 @@ class _PendingDocumentsViewerState extends State<PendingDocumentsViewer> {
                                           ),
                                           textScaler: TextScaler.linear(1),
                                         ),
-                                        // onPressed: () {
-                                        //   setState(() {
-                                        //     assigendUser = null;
-                                        //     isCheckBoxMarked = false;
-                                        //     // _selectedValue = _initialValue;
-                                        //     _selectedValues =
-                                        //         List<String>.generate(
-                                        //             alltextFieldvalues.length,
-                                        //             (index) => _initialValue);
-                                        //   });
-                                        //   _clearAllTextFields();
-                                        // },
                                         onPressed: resetAllThings,
                                         style: TextButton.styleFrom(
                                             minimumSize: Size(
