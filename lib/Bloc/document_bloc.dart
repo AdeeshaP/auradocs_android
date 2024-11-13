@@ -321,5 +321,31 @@ class DocumentBloc extends Bloc<DocumentEvent, DocumentState> {
         emit(DocumentError("An unexpected error occurred: $e"));
       }
     });
+
+    on<FetchWFDashboardCounts>((event, emit) async {
+      emit(DocumentCountLoading());
+
+      try {
+        // API call to fetch the dashboard counts
+        var response =
+            await ApiService.getWorkflowCounts(event.username, event.token);
+        print("Dashboard Count API Response Status: ${response.statusCode}");
+
+        if (response.statusCode == 200) {
+          var responseData = jsonDecode(response.body)['value'];
+
+          emit(WFDasboardCountLoaded(
+            inProgressTasksCount: responseData['pendingTasksCount'],
+            suspendedTasksCount: responseData['deletedProcessInstanceCount'],
+            completedTasksCount: responseData['completedProcessInstanceCount'],
+            assignedTasksCount: responseData['assingProcessCount'],
+          ));
+        } else {
+          emit(DocumentError("Failed to load dashboard counts"));
+        }
+      } catch (e) {
+        emit(DocumentError("An error occurred: $e"));
+      }
+    });
   }
 }

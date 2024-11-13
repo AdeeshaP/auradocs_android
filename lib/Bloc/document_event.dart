@@ -81,3 +81,10 @@ class FetchToDoHistory extends DocumentEvent {
 
   FetchToDoHistory(this.username, this.token);
 }
+
+class FetchWFDashboardCounts extends DocumentEvent {
+  final String username;
+  final String token;
+
+  FetchWFDashboardCounts(this.username, this.token);
+}

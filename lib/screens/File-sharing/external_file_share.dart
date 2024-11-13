@@ -123,11 +123,7 @@ class _ShareingFilesReceiveScreenState
 
     for (String? path in paths) {
       if (path != null) {
-        List<int> bytesOfImg = await File(path).readAsBytes();
         String extensionX = p.extension(path).substring(1);
-        String mimeType = '';
-
-        print(extensionX);
 
         if (extensionX == "jpg" || extensionX == "JPG") {
           mimeType = 'image/jpg';
@@ -140,12 +136,6 @@ class _ShareingFilesReceiveScreenState
         } else {
           mimeType = lookupMimeType(path)!;
         }
-
-        String viewedFileBase64String = base64.encode(bytesOfImg);
-
-        final fileName = path.split('/').last;
-
-        SharedAttachmentType type = mediaAttachments[paths.indexOf(path)]!.type;
       }
     }
   }

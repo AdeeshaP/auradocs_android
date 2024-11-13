@@ -68,6 +68,7 @@ dependencies:
   google_mlkit_text_recognition: ^0.14.0
   advance_pdf_viewer2: ^2.0.5+1
   jiffy: ^5.0.0
+  webview_flutter: ^3.0.0
 
 dev_dependencies:
   flutter_test:

@@ -168,6 +168,20 @@ class HistoryLoaded extends DocumentState {
   });
 }
 
+class WFDasboardCountLoaded extends DocumentState {
+  final String? inProgressTasksCount;
+  final String? suspendedTasksCount;
+  final String? completedTasksCount;
+  final String? assignedTasksCount;
+
+  WFDasboardCountLoaded({
+    this.inProgressTasksCount,
+    this.suspendedTasksCount,
+    this.completedTasksCount,
+    this.assignedTasksCount,
+  });
+}
+
 class DocumentError extends DocumentState {
   final String message;
 

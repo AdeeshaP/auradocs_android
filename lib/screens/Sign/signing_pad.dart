@@ -120,20 +120,6 @@ class _SigningPadState extends State<SigningPad> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      // TextButton(
-                      //   child: Text('Download'),
-                      //   style: TextButton.styleFrom(
-                      //     fixedSize: Size(110, 40),
-                      //     backgroundColor: Color.fromARGB(255, 245, 114, 54),
-                      //     foregroundColor: Colors.white,
-                      //     shape: RoundedRectangleBorder(
-                      //       borderRadius: BorderRadius.circular(0),
-                      //     ),
-                      //   ),
-                      //   onPressed: () {
-                      //     downlaodIamgeToGallery(jpegUint8List);
-                      //   },
-                      // ),
                       TextButton(
                         style: TextButton.styleFrom(
                           fixedSize: Size(110, 40),
@@ -146,11 +132,6 @@ class _SigningPadState extends State<SigningPad> {
                         child: Text('Upload'),
                         onPressed: () async {
                           uploadSignatures();
-                          // await checkBiometric();
-
-                          // await getAvailableBiometrics();
-
-                          // await authenticate();
                         },
                       )
                     ],
