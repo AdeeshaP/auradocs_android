@@ -14,3 +14,21 @@ class FetchFavoriteDocs extends DocumentEvent {
 
   FetchFavoriteDocs(this.username, this.token);
 }
+
+class FetchSearchDocuments extends DocumentEvent {
+  final String searchValue;
+  final String token;
+
+  FetchSearchDocuments(this.searchValue, this.token);
+}
+
+class FetchAdvancedeSearchDocuments extends DocumentEvent {
+  final String searchValue;
+  final int templateId;
+  final String templateName;
+  final String fieldId;
+  final String token;
+
+  FetchAdvancedeSearchDocuments(this.searchValue, this.templateName,
+      this.templateId, this.fieldId, this.token);
+}

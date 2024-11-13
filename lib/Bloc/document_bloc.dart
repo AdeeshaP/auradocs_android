@@ -68,5 +68,61 @@ class DocumentBloc extends Bloc<DocumentEvent, DocumentState> {
         emit(DocumentError("An unexpected error occurred: $e"));
       }
     });
+
+    on<FetchSearchDocuments>((event, emit) async {
+      emit(DocumentLoading());
+      try {
+        var response = await ApiService.getDocumentsBySearchValue(
+            event.searchValue, event.token);
+        if (response.statusCode == 200) {
+          var responsedata = jsonDecode(response.body);
+          List<dynamic> documents = responsedata?['value'] ?? [];
+          int totalPages = (documents.length / 4).ceil();
+
+          emit(PartialSearchDocumentLoaded(
+                  searchDocs: responsedata['value'], totalPages: totalPages)
+              .mergeWith(state is SearchDocumentLoaded
+                  ? state as SearchDocumentLoaded
+                  : SearchDocumentLoaded()));
+        } else if (response.statusCode == 404) {
+          emit(PartialSearchDocumentLoaded(searchDocs: null).mergeWith(
+              state is SearchDocumentLoaded
+                  ? state as SearchDocumentLoaded
+                  : SearchDocumentLoaded()));
+        } else if (response.statusCode == 500) {
+          emit(
+              DocumentError("Server error! Please contact the administrator."));
+        }
+      } catch (e) {
+        emit(DocumentError("An unexpected error occurred: $e"));
+      }
+    });
+
+    on<FetchAdvancedeSearchDocuments>((event, emit) async {
+      emit(DocumentLoading());
+      try {
+        var response = await ApiService.advanceSearch(event.searchValue,
+            event.templateId.toString(), event.fieldId, event.token);
+        if (response.statusCode == 200) {
+          var responsedata = jsonDecode(response.body);
+          List<dynamic> documents = responsedata?['value'] ?? [];
+          int totalPages = (documents.length / 4).ceil();
+          emit(
+            AdvancedSearchedListLoaded(
+              documents: documents,
+              totalPages: totalPages,
+            ),
+          );
+        } else if (response.statusCode == 404) {
+          emit(DocumentError("No documents for advanced search."));
+        } else if (response.statusCode == 500) {
+          emit(
+              DocumentError("Server error! Please contact the administrator."));
+        }
+      } catch (e) {
+        emit(DocumentError("An unexpected error occurred: $e"));
+      }
+    });
+
   }
 }

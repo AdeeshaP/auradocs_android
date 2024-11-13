@@ -2,9 +2,11 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:app_version_update/app_version_update.dart';
 import 'package:auradocs_android/API-Services/api_service.dart';
+import 'package:auradocs_android/Bloc/document_bloc.dart';
 import 'package:auradocs_android/Models/users.dart';
 import 'package:auradocs_android/screens/Bookmarks/bookmarks_list.dart';
 import 'package:auradocs_android/screens/Direct-Scan/file_scan.dart';
+import 'package:auradocs_android/screens/Document-Search/search_list.dart';
 import 'package:auradocs_android/screens/File-Picker/file_picker_screen.dart';
 import 'package:auradocs_android/screens/History/history_tables.dart';
 import 'package:auradocs_android/screens/Login/enable_local_auth_bottomsheet.dart';
@@ -15,6 +17,7 @@ import 'package:auradocs_android/screens/contact_us_screen.dart';
 import 'package:auradocs_android/utils/responsive.dart';
 import 'package:document_scanner_flutter/configs/configs.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:new_version_plus/new_version_plus.dart';
@@ -648,117 +651,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                             ? 2
                                             : 10,
                                     children: gridItems,
-                                    // [
-                                    //   directScanTab(
-                                    //     size,
-                                    //     "Scan",
-                                    //     Icons.camera,
-                                    //   ),
-                                    //   gridViewTab(
-                                    //     size,
-                                    //     "Upload",
-                                    //     AuradocsFilePickerScreen(),
-                                    //     FontAwesomeIcons.fileArrowUp,
-                                    //     0,
-                                    //   ),
-                                    //   gridViewTab(
-                                    //     size,
-                                    //     "Indexing",
-                                    //     PendingDOCXListScreen(),
-                                    //     Icons.pending_actions,
-                                    //     pendingCount,
-                                    //   ),
-                                    //   AdvSearchTab(
-                                    //     size,
-                                    //     "Advanced Search",
-                                    //     FontAwesomeIcons.searchengin,
-                                    //   ),
-                                    //   // gridViewTab(
-                                    //   //   size,
-                                    //   //   "Approvals",
-                                    //   //   ApprovalsScreen(),
-                                    //   //   Icons.approval,
-                                    //   //   0,
-                                    //   // ),
-                                    //   NotImplementingFeature(
-                                    //     size,
-                                    //     "Approvals",
-                                    //     Icons.approval,
-                                    //     0,
-                                    //   ),
-                                    //   gridViewTab(
-                                    //     size,
-                                    //     "Shared",
-                                    //     SharedWithMeScreen(),
-                                    //     FontAwesomeIcons.shareFromSquare,
-                                    //     sharedCount,
-                                    //   ),
-                                    //   gridViewTab(
-                                    //     size,
-                                    //     "Sign",
-                                    //     DocumentSignatureScreen(),
-                                    //     // SigningTskListScreen(
-                                    //     //     token: token, username: username),
-                                    //     FontAwesomeIcons.signature,
-                                    //     0,
-                                    //   ),
-                                    //   // NotImplementingFeature(
-                                    //   //   size,
-                                    //   //   "Sign",
-                                    //   //   FontAwesomeIcons.signature,
-                                    //   //   0,
-                                    //   // ),
-                                    //   // gridViewTab(
-                                    //   //     size,
-                                    //   //     "To-Do",
-                                    //   //     TasksListScreen(),
-                                    //   //     FontAwesomeIcons.listCheck,
-                                    //   //     0),
-                                    //   NotImplementingFeature(
-                                    //     size,
-                                    //     "To-Do",
-                                    //     FontAwesomeIcons.listCheck,
-                                    //     0,
-                                    //   ),
-                                    //   gridViewTab(
-                                    //     size,
-                                    //     "History",
-                                    //     HistoryDummy(),
-                                    //     FontAwesomeIcons.clockRotateLeft,
-                                    //     indexHistoryCount +
-                                    //         accountHistoryCount +
-                                    //         downloadHistoryCount +
-                                    //         todoHistoryCount,
-                                    //   ),
-                                    //   gridViewTab(
-                                    //     size,
-                                    //     "Favorite",
-                                    //     BookmarkListScreen(),
-                                    //     FontAwesomeIcons.star,
-                                    //     bookmarkcount,
-                                    //   ),
-                                    //   // gridViewTab(
-                                    //   //   size,
-                                    //   //   "Access",
-                                    //   //   AccessRequestsScreen(),
-                                    //   //   Icons.desktop_mac_outlined,
-                                    //   //   accessCount,
-                                    //   // ),
-                                    //   gridViewTab(
-                                    //     size,
-                                    //     "Workflow",
-                                    //     WorkflowDashboard(),
-                                    //     Icons.keyboard_double_arrow_right,
-                                    //     0,
-                                    //   ),
-                                    //   NotImplementingFeature(
-                                    //     size,
-                                    //     "Access",
-                                    //     Icons.desktop_mac_outlined,
-                                    //     0,
-                                    //   ),
-
-                                    // ],
                                   ),
                                 )
                               : Padding(
@@ -2469,78 +2361,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     );
   }
 
-  // Widget SearchResetButtons() {
-  //   return Padding(
-  //     padding: EdgeInsets.symmetric(vertical: 15),
-  //     child: Row(
-  //       mainAxisAlignment: MainAxisAlignment.center,
-  //       children: [
-  //         SizedBox(
-  //           width: 100,
-  //           height: 40,
-  //           child: ElevatedButton(
-  //             child: Text(
-  //               'RESET',
-  //               style: GoogleFonts.alegreya(
-  //                 textStyle: Theme.of(context).textTheme.bodyMedium,
-  //                 fontSize: 15,
-  //                 fontWeight: FontWeight.w700,
-  //                 color: Colors.black,
-  //               ),
-  //             ),
-  //             onPressed: () {
-  //               setState(() {
-  //                 _controllers.forEach((tcontroller) => tcontroller.clear());
-  //               });
-  //             },
-  //             style: ElevatedButton.styleFrom(
-  //               shape: RoundedRectangleBorder(
-  //                 borderRadius: BorderRadius.circular(5),
-  //               ),
-  //               backgroundColor: Colors.grey[400],
-  //             ),
-  //           ),
-  //         ),
-  //         SizedBox(width: 10),
-  //         SizedBox(
-  //           width: 110,
-  //           height: 40,
-  //           child: ElevatedButton(
-  //             child: Text(
-  //               'SEARCH',
-  //               style: GoogleFonts.alegreya(
-  //                 textStyle: Theme.of(context).textTheme.bodyMedium,
-  //                 fontSize: 15,
-  //                 fontWeight: FontWeight.w700,
-  //                 color: Colors.white,
-  //               ),
-  //             ),
-  //             onPressed: () async {
-  //               Navigator.pop(context);
-  //               Navigator.of(context).push(
-  //                 MaterialPageRoute(
-  //                   builder: (context) => AdvancedSearchedListScreen(
-  //                     searchValue: advanceSearchValueController.text,
-  //                     templateId: templateId,
-  //                     templateName: templateType,
-  //                     fieldId: indexFieldId,
-  //                   ),
-  //                 ),
-  //               );
-  //             },
-  //             style: ElevatedButton.styleFrom(
-  //               shape: RoundedRectangleBorder(
-  //                 borderRadius: BorderRadius.circular(5),
-  //               ),
-  //               backgroundColor: Color.fromARGB(255, 63, 143, 240),
-  //             ),
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
   Container getSearchBoxWidget() {
     Size size = MediaQuery.of(context).size;
 
@@ -2668,19 +2488,19 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                         final dynamic tooltip = _toolTipKey.currentState;
                         tooltip?.ensureTooltipVisible();
                       } else {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) {
-                        //       return BlocProvider(
-                        //         create: (context) =>
-                        //             DocumentBloc(username, token),
-                        //         child: SearchedDocumentListScreen(
-                        //             searchValue: trimmedValue),
-                        //       );
-                        //     },
-                        //   ),
-                        // );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return BlocProvider(
+                                create: (context) =>
+                                    DocumentBloc(username, token),
+                                child: SearchedDocumentListScreen(
+                                    searchValue: trimmedValue),
+                              );
+                            },
+                          ),
+                        );
                       }
                     },
                     child: Tooltip(

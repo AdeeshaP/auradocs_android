@@ -3,7 +3,9 @@ import 'dart:io';
 import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:auradocs_android/API-Services/api_service.dart';
+import 'package:auradocs_android/Bloc/document_bloc.dart';
 import 'package:auradocs_android/Models/users.dart';
+import 'package:auradocs_android/screens/Document-Search/search_list.dart';
 import 'package:auradocs_android/screens/Sliders/landing_page.dart';
 import 'package:auradocs_android/screens/full-screen-viewer/full_screen_viewer.dart';
 import 'package:auradocs_android/screens/home_screen.dart';
@@ -15,6 +17,7 @@ import 'package:csv/csv.dart';
 import 'package:external_path/external_path.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
@@ -980,427 +983,6 @@ class _SharedDocsViewerScreenState extends State<SharedDocsViewerScreen> {
                                                 )
                                               : SizedBox(
                                                   height: size.height * 0.02),
-
-                                          // -------------------------COMPLETED TASKS -------------------------//
-                                          // completedTasks.isNotEmpty
-                                          //     ? Padding(
-                                          //         padding: EdgeInsets.only(
-                                          //             left: 8, right: 8, top: 4),
-                                          //         child: Container(
-                                          //           height: size.height * 0.08,
-                                          //           padding:
-                                          //               EdgeInsets.only(top: 5),
-                                          //           decoration: BoxDecoration(
-                                          //             color: Colors.white,
-                                          //             border: Border.all(
-                                          //                 color: borderColor,
-                                          //                 width: 1.0),
-                                          //           ),
-                                          //           width: double.infinity,
-                                          //           child: SingleChildScrollView(
-                                          //             scrollDirection:
-                                          //                 scrollDirection,
-                                          //             child: ListView.builder(
-                                          //               physics:
-                                          //                   NeverScrollableScrollPhysics(),
-                                          //               shrinkWrap: true,
-                                          //               itemCount:
-                                          //                   completedTasks.length,
-                                          //               itemBuilder:
-                                          //                   (BuildContext context,
-                                          //                       int index) {
-                                          //                 final item =
-                                          //                     completedTasks[
-                                          //                         index];
-                                          //                 approvedUser1 = item[
-                                          //                     'approvedUser'];
-                                          //                 remark1 =
-                                          //                     item['remark'];
-                                          //                 completedTaskstatus =
-                                          //                     item['status'];
-                                          //                 comment1 =
-                                          //                     item['comment'];
-
-                                          //                 return Column(
-                                          //                   crossAxisAlignment:
-                                          //                       CrossAxisAlignment
-                                          //                           .start,
-                                          //                   children: [
-                                          //                     Row(
-                                          //                       children: [
-                                          //                         Expanded(
-                                          //                           flex: 7,
-                                          //                           child:
-                                          //                               Padding(
-                                          //                             padding: EdgeInsets.symmetric(
-                                          //                                 horizontal:
-                                          //                                     8,
-                                          //                                 vertical:
-                                          //                                     3),
-                                          //                             child: Text(
-                                          //                               "Approved By : $approvedUser1",
-                                          //                               style:
-                                          //                                   TextStyle(
-                                          //                                 fontSize:
-                                          //                                     14,
-                                          //                                 color: Colors
-                                          //                                     .black87,
-                                          //                               ),
-                                          //                             ),
-                                          //                           ),
-                                          //                         ),
-                                          //                         Expanded(
-                                          //                           flex: 4,
-                                          //                           child:
-                                          //                               Padding(
-                                          //                             padding: EdgeInsets.symmetric(
-                                          //                                 horizontal:
-                                          //                                     8,
-                                          //                                 vertical:
-                                          //                                     3),
-                                          //                             child: Row(
-                                          //                               mainAxisAlignment:
-                                          //                                   MainAxisAlignment
-                                          //                                       .start,
-                                          //                               children: [
-                                          //                                 Container(
-                                          //                                   height:
-                                          //                                       8,
-                                          //                                   width:
-                                          //                                       8,
-                                          //                                   decoration:
-                                          //                                       BoxDecoration(
-                                          //                                     color: completedTaskstatus == "accepted"
-                                          //                                         ? Colors.green
-                                          //                                         : completedTaskstatus == "pending"
-                                          //                                             ? Colors.orange
-                                          //                                             : Colors.red,
-                                          //                                     shape:
-                                          //                                         BoxShape.circle,
-                                          //                                     border:
-                                          //                                         Border.all(
-                                          //                                       color: completedTaskstatus == "accepted"
-                                          //                                           ? Colors.green
-                                          //                                           : completedTaskstatus == "pending"
-                                          //                                               ? Colors.orange
-                                          //                                               : Colors.red,
-                                          //                                     ),
-                                          //                                   ),
-                                          //                                 ),
-                                          //                                 SizedBox(
-                                          //                                     width:
-                                          //                                         5),
-                                          //                                 Text(
-                                          //                                   completedTaskstatus,
-                                          //                                   style:
-                                          //                                       GoogleFonts.lato(
-                                          //                                     textStyle:
-                                          //                                         Theme.of(context).textTheme.headlineMedium,
-                                          //                                     fontSize:
-                                          //                                         14,
-                                          //                                     fontWeight:
-                                          //                                         FontWeight.w900,
-                                          //                                     color: completedTaskstatus == "accepted"
-                                          //                                         ? Colors.green
-                                          //                                         : completedTaskstatus == "pending"
-                                          //                                             ? Colors.orange[300]
-                                          //                                             : Colors.red,
-                                          //                                   ),
-                                          //                                 ),
-                                          //                               ],
-                                          //                             ),
-                                          //                           ),
-                                          //                         ),
-                                          //                       ],
-                                          //                     ),
-                                          //                     Padding(
-                                          //                       padding: EdgeInsets
-                                          //                           .symmetric(
-                                          //                               horizontal:
-                                          //                                   8,
-                                          //                               vertical:
-                                          //                                   3),
-                                          //                       child: Text(
-                                          //                         "Comment : $comment1",
-                                          //                         style:
-                                          //                             TextStyle(
-                                          //                           fontSize: 14,
-                                          //                           color: Colors
-                                          //                               .black87,
-                                          //                         ),
-                                          //                       ),
-                                          //                     ),
-                                          //                     Divider(height: 4),
-                                          //                   ],
-                                          //                 );
-                                          //               },
-                                          //             ),
-                                          //           ),
-                                          //         ),
-                                          //       )
-                                          //     : Container(),
-
-                                          // -------------------------PENDING TASKS TEXT FIELDS-------------------------//
-                                          // pendingTaskById.isNotEmpty
-                                          //     ? Padding(
-                                          //         padding: EdgeInsets.symmetric(
-                                          //             horizontal: 7, vertical: 5),
-                                          //         child: Container(
-                                          //           width: double.infinity,
-                                          //           child: ListView.builder(
-                                          //             scrollDirection:
-                                          //                 scrollDirection,
-                                          //             shrinkWrap: true,
-                                          //             itemCount: 1,
-                                          //             // itemCount: pendingTaskById.length,
-                                          //             itemBuilder:
-                                          //                 (BuildContext context,
-                                          //                     int index) {
-                                          //               List<String>
-                                          //                   pendingTaskStatuses =
-                                          //                   [
-                                          //                 'pending',
-                                          //                 'accepted',
-                                          //                 'rejected'
-                                          //               ];
-                                          //               final item2 =
-                                          //                   pendingTaskById[
-                                          //                       index];
-
-                                          //               pendingstatus =
-                                          //                   item2['status'];
-                                          //               taskId = item2['id'];
-
-                                          //               if (pendingstatus ==
-                                          //                   "pending") {
-                                          //                 return Form(
-                                          //                   key: _formKey2,
-                                          //                   child: Column(
-                                          //                     children: [
-                                          //                       Padding(
-                                          //                         padding: EdgeInsets
-                                          //                             .symmetric(
-                                          //                                 vertical:
-                                          //                                     4),
-                                          //                         child:
-                                          //                             DecoratedBox(
-                                          //                           decoration:
-                                          //                               BoxDecoration(
-                                          //                             borderRadius:
-                                          //                                 BorderRadius
-                                          //                                     .circular(2),
-                                          //                             border: Border.all(
-                                          //                                 color: Colors
-                                          //                                     .grey),
-                                          //                           ),
-                                          //                           child:
-                                          //                               Padding(
-                                          //                             padding: EdgeInsets.symmetric(
-                                          //                                 horizontal:
-                                          //                                     8.0),
-                                          //                             child: DropdownButtonFormField<
-                                          //                                 String>(
-                                          //                               autovalidateMode:
-                                          //                                   AutovalidateMode
-                                          //                                       .always,
-                                          //                               decoration:
-                                          //                                   InputDecoration(
-                                          //                                 enabledBorder:
-                                          //                                     UnderlineInputBorder(borderSide: BorderSide(color: Colors.white12)),
-                                          //                               ),
-                                          //                               icon: Icon(
-                                          //                                   Icons
-                                          //                                       .arrow_drop_down),
-                                          //                               elevation:
-                                          //                                   2,
-                                          //                               validator: (value) => _validate &&
-                                          //                                       value == null
-                                          //                                   ? 'Status is required'
-                                          //                                   : null,
-                                          //                               isExpanded:
-                                          //                                   true,
-                                          //                               hint:
-                                          //                                   Text(
-                                          //                                 "Select the status..",
-                                          //                                 style:
-                                          //                                     TextStyle(
-                                          //                                   color:
-                                          //                                       Colors.black54,
-                                          //                                   fontSize:
-                                          //                                       15,
-                                          //                                 ),
-                                          //                               ),
-                                          //                               value:
-                                          //                                   pendingTaskStatus,
-                                          //                               onChanged:
-                                          //                                   (String?
-                                          //                                       newValue1) {
-                                          //                                 setState(
-                                          //                                     () {
-                                          //                                   pendingTaskStatus =
-                                          //                                       newValue1!;
-                                          //                                 });
-                                          //                                 print(
-                                          //                                     "pendingTaskStatus $pendingTaskStatus");
-                                          //                               },
-                                          //                               items: pendingTaskStatuses
-                                          //                                   .map(
-                                          //                                       (value1) {
-                                          //                                 return DropdownMenuItem<
-                                          //                                     String>(
-                                          //                                   value:
-                                          //                                       value1,
-                                          //                                   child:
-                                          //                                       Text(
-                                          //                                     value1,
-                                          //                                     style:
-                                          //                                         TextStyle(color: Colors.black87, fontSize: 16),
-                                          //                                   ),
-                                          //                                 );
-                                          //                               }).toList(),
-                                          //                             ),
-                                          //                           ),
-                                          //                         ),
-                                          //                       ),
-                                          //                       Padding(
-                                          //                         padding: EdgeInsets
-                                          //                             .symmetric(
-                                          //                                 vertical:
-                                          //                                     5),
-                                          //                         child:
-                                          //                             TextFormField(
-                                          //                           maxLines: 3,
-                                          //                           autovalidateMode:
-                                          //                               AutovalidateMode
-                                          //                                   .always,
-                                          //                           textInputAction:
-                                          //                               TextInputAction
-                                          //                                   .next,
-                                          //                           controller:
-                                          //                               commentController,
-                                          //                           onSaved:
-                                          //                               (newValue) {
-                                          //                             commentController
-                                          //                                     .text ==
-                                          //                                 newValue;
-                                          //                           },
-                                          //                           decoration:
-                                          //                               InputDecoration(
-                                          //                             contentPadding: EdgeInsets.symmetric(
-                                          //                                 vertical:
-                                          //                                     1,
-                                          //                                 horizontal:
-                                          //                                     5),
-                                          //                             border: OutlineInputBorder(
-                                          //                                 borderRadius:
-                                          //                                     BorderRadius.circular(2)),
-                                          //                             labelText:
-                                          //                                 "Comment",
-                                          //                           ),
-                                          //                           validator:
-                                          //                               (valuex) {
-                                          //                             if (valuex!
-                                          //                                     .isEmpty &&
-                                          //                                 _validate) {
-                                          //                               return 'Comment is required';
-                                          //                             }
-                                          //                             return null;
-                                          //                           },
-                                          //                           keyboardType:
-                                          //                               TextInputType
-                                          //                                   .text,
-                                          //                         ),
-                                          //                       ),
-                                          //                       SizedBox(
-                                          //                           height: 10),
-                                          //                       SizedBox(
-                                          //                         width: Responsive.isMobileSmall(context) ||
-                                          //                                 Responsive.isMobileMedium(
-                                          //                                     context) ||
-                                          //                                 Responsive.isMobileLarge(
-                                          //                                     context) ||
-                                          //                                 Responsive.isTabletPortrait(
-                                          //                                     context)
-                                          //                             ? size.width *
-                                          //                                 0.25
-                                          //                             : size.width *
-                                          //                                 0.2,
-                                          //                         height: Responsive.isMobileSmall(context) ||
-                                          //                                 Responsive.isMobileMedium(
-                                          //                                     context) ||
-                                          //                                 Responsive.isMobileLarge(
-                                          //                                     context)
-                                          //                             ? size.width *
-                                          //                                 0.1
-                                          //                             : Responsive.isTabletPortrait(
-                                          //                                     context)
-                                          //                                 ? size.width *
-                                          //                                     0.06
-                                          //                                 : size.width *
-                                          //                                     0.05,
-                                          //                         child:
-                                          //                             TextButton(
-                                          //                           child: Text(
-                                          //                             'Submit',
-                                          //                             style:
-                                          //                                 TextStyle(
-                                          //                               fontWeight:
-                                          //                                   FontWeight
-                                          //                                       .bold,
-                                          //                               fontSize: Responsive.isMobileSmall(context) ||
-                                          //                                       Responsive.isMobileMedium(context) ||
-                                          //                                       Responsive.isMobileLarge(context)
-                                          //                                   ? 15
-                                          //                                   : Responsive.isTabletPortrait(context)
-                                          //                                       ? 18
-                                          //                                       : 20,
-                                          //                               color: Colors
-                                          //                                   .white,
-                                          //                             ),
-                                          //                           ),
-                                          //                           onPressed:
-                                          //                               () {
-                                          //                             setState(
-                                          //                                 () {
-                                          //                               _validate =
-                                          //                                   true;
-                                          //                             });
-                                          //                             if (_formKey2
-                                          //                                 .currentState!
-                                          //                                 .validate()) {
-                                          //                               updatePendingTasksStatus(
-                                          //                                   taskId,
-                                          //                                   pendingTaskStatus!,
-                                          //                                   commentController
-                                          //                                       .text);
-                                          //                             }
-                                          //                           },
-                                          //                           style:
-                                          //                               ButtonStyle(
-                                          //                             backgroundColor:
-                                          //                                 MaterialStateProperty
-                                          //                                     .all(
-                                          //                               Color.fromARGB(
-                                          //                                   255,
-                                          //                                   237,
-                                          //                                   172,
-                                          //                                   10),
-                                          //                             ),
-                                          //                           ),
-                                          //                         ),
-                                          //                       ),
-                                          //                       SizedBox(
-                                          //                           height: 20),
-                                          //                     ],
-                                          //                   ),
-                                          //                 );
-                                          //               }
-                                          //               return null;
-                                          //             },
-                                          //           ),
-                                          //         ),
-                                          //       )
-                                          //     : SizedBox(),
                                         ],
                                       ),
                                     ),
@@ -1413,7 +995,6 @@ class _SharedDocsViewerScreenState extends State<SharedDocsViewerScreen> {
                       ),
                     ),
                   ),
-                  // AdvancedSearchBox(_isAdvanceSearchVisible),
                 ],
               ),
             ]),
@@ -1528,81 +1109,81 @@ class _SharedDocsViewerScreenState extends State<SharedDocsViewerScreen> {
     return SingleChildScrollView(
       scrollDirection: scrollDirection,
       child: Row(
-        // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          // Container(
-          //   decoration: BoxDecoration(
-          //     borderRadius: BorderRadius.circular(5),
-          //     color: Color.fromARGB(179, 1, 1, 36),
-          //   ),
-          //   width: Responsive.isMobileSmall(context) ||
-          //           Responsive.isMobileMedium(context) ||
-          //           Responsive.isMobileLarge(context)
-          //       ? 35
-          //       : Responsive.isTabletPortrait(context)
-          //           ? 45
-          //           : 45,
-          //   height: Responsive.isMobileSmall(context) ||
-          //           Responsive.isMobileMedium(context) ||
-          //           Responsive.isMobileLarge(context)
-          //       ? 30
-          //       : Responsive.isTabletPortrait(context)
-          //           ? 40
-          //           : 40,
-          //   child: IconButton(
-          //     padding: EdgeInsets.zero,
-          //     onPressed: () {
-          //       // print(widget.fileNames[indx]['ImageId']);
-          //     },
-          //     icon: Icon(
-          //       Icons.shopping_cart_rounded,
-          //       color: Colors.white,
-          //       size: Responsive.isMobileSmall(context) ||
-          //               Responsive.isMobileMedium(context) ||
-          //               Responsive.isMobileLarge(context)
-          //           ? 18
-          //           : Responsive.isTabletPortrait(context)
-          //               ? 25
-          //               : 25,
-          //     ),
-          //   ),
-          // ),
-          // Container(
-          //   margin: EdgeInsets.only(left: 5),
-          //   decoration: BoxDecoration(
-          //     borderRadius: BorderRadius.circular(5),
-          //     color: Color.fromARGB(179, 1, 1, 36),
-          //   ),
-          //   width: Responsive.isMobileSmall(context) ||
-          //           Responsive.isMobileMedium(context) ||
-          //           Responsive.isMobileLarge(context)
-          //       ? 35
-          //       : Responsive.isTabletPortrait(context)
-          //           ? 45
-          //           : 45,
-          //   height: Responsive.isMobileSmall(context) ||
-          //           Responsive.isMobileMedium(context) ||
-          //           Responsive.isMobileLarge(context)
-          //       ? 30
-          //       : Responsive.isTabletPortrait(context)
-          //           ? 40
-          //           : 40,
-          //   child: IconButton(
-          //     padding: EdgeInsets.zero,
-          //     onPressed: () {},
-          //     icon: Icon(
-          //       Icons.note_alt_outlined,
-          //       color: Colors.white,
-          //       size: Responsive.isMobileSmall(context) ||
-          //               Responsive.isMobileMedium(context) ||
-          //               Responsive.isMobileLarge(context)
-          //           ? 20
-          //           : Responsive.isTabletPortrait(context)
-          //               ? 27
-          //               : 27,
-          //     ),
-          //   ),
-          // ),
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: Color.fromARGB(179, 1, 1, 36),
+            ),
+            width: Responsive.isMobileSmall(context) ||
+                    Responsive.isMobileMedium(context) ||
+                    Responsive.isMobileLarge(context)
+                ? 35
+                : Responsive.isTabletPortrait(context)
+                    ? 45
+                    : 45,
+            height: Responsive.isMobileSmall(context) ||
+                    Responsive.isMobileMedium(context) ||
+                    Responsive.isMobileLarge(context)
+                ? 30
+                : Responsive.isTabletPortrait(context)
+                    ? 40
+                    : 40,
+            child: IconButton(
+              padding: EdgeInsets.zero,
+              onPressed: () {
+                // print(widget.fileNames[indx]['ImageId']);
+              },
+              icon: Icon(
+                Icons.shopping_cart_rounded,
+                color: Colors.white,
+                size: Responsive.isMobileSmall(context) ||
+                        Responsive.isMobileMedium(context) ||
+                        Responsive.isMobileLarge(context)
+                    ? 18
+                    : Responsive.isTabletPortrait(context)
+                        ? 25
+                        : 25,
+              ),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(left: 5),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: Color.fromARGB(179, 1, 1, 36),
+            ),
+            width: Responsive.isMobileSmall(context) ||
+                    Responsive.isMobileMedium(context) ||
+                    Responsive.isMobileLarge(context)
+                ? 35
+                : Responsive.isTabletPortrait(context)
+                    ? 45
+                    : 45,
+            height: Responsive.isMobileSmall(context) ||
+                    Responsive.isMobileMedium(context) ||
+                    Responsive.isMobileLarge(context)
+                ? 30
+                : Responsive.isTabletPortrait(context)
+                    ? 40
+                    : 40,
+            child: IconButton(
+              padding: EdgeInsets.zero,
+              onPressed: () {},
+              icon: Icon(
+                Icons.note_alt_outlined,
+                color: Colors.white,
+                size: Responsive.isMobileSmall(context) ||
+                        Responsive.isMobileMedium(context) ||
+                        Responsive.isMobileLarge(context)
+                    ? 20
+                    : Responsive.isTabletPortrait(context)
+                        ? 27
+                        : 27,
+              ),
+            ),
+          ),
           Container(
             margin: EdgeInsets.only(left: 5),
             decoration: BoxDecoration(
@@ -1641,150 +1222,150 @@ class _SharedDocsViewerScreenState extends State<SharedDocsViewerScreen> {
               ),
             ),
           ),
-          // Container(
-          //   margin: EdgeInsets.only(left: 5),
-          //   decoration: BoxDecoration(
-          //     borderRadius: BorderRadius.circular(5),
-          //     color: Color.fromARGB(179, 1, 1, 36),
-          //   ),
-          //   width: Responsive.isMobileSmall(context) ||
-          //           Responsive.isMobileMedium(context) ||
-          //           Responsive.isMobileLarge(context)
-          //       ? 35
-          //       : Responsive.isTabletPortrait(context)
-          //           ? 45
-          //           : 45,
-          //   height: Responsive.isMobileSmall(context) ||
-          //           Responsive.isMobileMedium(context) ||
-          //           Responsive.isMobileLarge(context)
-          //       ? 30
-          //       : Responsive.isTabletPortrait(context)
-          //           ? 40
-          //           : 40,
-          //   child: IconButton(
-          //     padding: EdgeInsets.zero,
-          //     onPressed: () {},
-          //     icon: Icon(
-          //       Icons.print_outlined,
-          //       color: Colors.white,
-          //       size: Responsive.isMobileSmall(context) ||
-          //               Responsive.isMobileMedium(context) ||
-          //               Responsive.isMobileLarge(context)
-          //           ? 20
-          //           : Responsive.isTabletPortrait(context)
-          //               ? 27
-          //               : 27,
-          //     ),
-          //   ),
-          // ),
-          // Container(
-          //   margin: EdgeInsets.only(left: 5),
-          //   decoration: BoxDecoration(
-          //     borderRadius: BorderRadius.circular(5),
-          //     color: Color.fromARGB(179, 1, 1, 36),
-          //   ),
-          //   width: Responsive.isMobileSmall(context) ||
-          //           Responsive.isMobileMedium(context) ||
-          //           Responsive.isMobileLarge(context)
-          //       ? 35
-          //       : Responsive.isTabletPortrait(context)
-          //           ? 45
-          //           : 45,
-          //   height: Responsive.isMobileSmall(context) ||
-          //           Responsive.isMobileMedium(context) ||
-          //           Responsive.isMobileLarge(context)
-          //       ? 30
-          //       : Responsive.isTabletPortrait(context)
-          //           ? 40
-          //           : 40,
-          //   child: IconButton(
-          //     padding: EdgeInsets.zero,
-          //     onPressed: () {},
-          //     icon: Icon(
-          //       Icons.delete_rounded,
-          //       color: Colors.white,
-          //       size: Responsive.isMobileSmall(context) ||
-          //               Responsive.isMobileMedium(context) ||
-          //               Responsive.isMobileLarge(context)
-          //           ? 20
-          //           : Responsive.isTabletPortrait(context)
-          //               ? 27
-          //               : 27,
-          //     ),
-          //   ),
-          // ),
-          // Container(
-          //   margin: EdgeInsets.only(left: 5),
-          //   decoration: BoxDecoration(
-          //     borderRadius: BorderRadius.circular(5),
-          //     color: Color.fromARGB(179, 1, 1, 36),
-          //   ),
-          //   width: Responsive.isMobileSmall(context) ||
-          //           Responsive.isMobileMedium(context) ||
-          //           Responsive.isMobileLarge(context)
-          //       ? 35
-          //       : Responsive.isTabletPortrait(context)
-          //           ? 45
-          //           : 45,
-          //   height: Responsive.isMobileSmall(context) ||
-          //           Responsive.isMobileMedium(context) ||
-          //           Responsive.isMobileLarge(context)
-          //       ? 30
-          //       : Responsive.isTabletPortrait(context)
-          //           ? 40
-          //           : 40,
-          //   child: IconButton(
-          //     padding: EdgeInsets.zero,
-          //     onPressed: () {},
-          //     icon: Icon(
-          //       Icons.file_open_outlined,
-          //       color: Colors.white,
-          //       size: Responsive.isMobileSmall(context) ||
-          //               Responsive.isMobileMedium(context) ||
-          //               Responsive.isMobileLarge(context)
-          //           ? 20
-          //           : Responsive.isTabletPortrait(context)
-          //               ? 27
-          //               : 27,
-          //     ),
-          //   ),
-          // ),
-          // Container(
-          //   margin: EdgeInsets.only(left: 5),
-          //   decoration: BoxDecoration(
-          //     borderRadius: BorderRadius.circular(5),
-          //     color: Color.fromARGB(179, 1, 1, 36),
-          //   ),
-          //   width: Responsive.isMobileSmall(context) ||
-          //           Responsive.isMobileMedium(context) ||
-          //           Responsive.isMobileLarge(context)
-          //       ? 35
-          //       : Responsive.isTabletPortrait(context)
-          //           ? 45
-          //           : 45,
-          //   height: Responsive.isMobileSmall(context) ||
-          //           Responsive.isMobileMedium(context) ||
-          //           Responsive.isMobileLarge(context)
-          //       ? 30
-          //       : Responsive.isTabletPortrait(context)
-          //           ? 40
-          //           : 40,
-          //   child: IconButton(
-          //     padding: EdgeInsets.zero,
-          //     onPressed: () {},
-          //     icon: Icon(
-          //       Icons.feed_outlined,
-          //       color: Colors.white,
-          //       size: Responsive.isMobileSmall(context) ||
-          //               Responsive.isMobileMedium(context) ||
-          //               Responsive.isMobileLarge(context)
-          //           ? 23
-          //           : Responsive.isTabletPortrait(context)
-          //               ? 29
-          //               : 29,
-          //     ),
-          //   ),
-          // ),
+          Container(
+            margin: EdgeInsets.only(left: 5),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: Color.fromARGB(179, 1, 1, 36),
+            ),
+            width: Responsive.isMobileSmall(context) ||
+                    Responsive.isMobileMedium(context) ||
+                    Responsive.isMobileLarge(context)
+                ? 35
+                : Responsive.isTabletPortrait(context)
+                    ? 45
+                    : 45,
+            height: Responsive.isMobileSmall(context) ||
+                    Responsive.isMobileMedium(context) ||
+                    Responsive.isMobileLarge(context)
+                ? 30
+                : Responsive.isTabletPortrait(context)
+                    ? 40
+                    : 40,
+            child: IconButton(
+              padding: EdgeInsets.zero,
+              onPressed: () {},
+              icon: Icon(
+                Icons.print_outlined,
+                color: Colors.white,
+                size: Responsive.isMobileSmall(context) ||
+                        Responsive.isMobileMedium(context) ||
+                        Responsive.isMobileLarge(context)
+                    ? 20
+                    : Responsive.isTabletPortrait(context)
+                        ? 27
+                        : 27,
+              ),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(left: 5),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: Color.fromARGB(179, 1, 1, 36),
+            ),
+            width: Responsive.isMobileSmall(context) ||
+                    Responsive.isMobileMedium(context) ||
+                    Responsive.isMobileLarge(context)
+                ? 35
+                : Responsive.isTabletPortrait(context)
+                    ? 45
+                    : 45,
+            height: Responsive.isMobileSmall(context) ||
+                    Responsive.isMobileMedium(context) ||
+                    Responsive.isMobileLarge(context)
+                ? 30
+                : Responsive.isTabletPortrait(context)
+                    ? 40
+                    : 40,
+            child: IconButton(
+              padding: EdgeInsets.zero,
+              onPressed: () {},
+              icon: Icon(
+                Icons.delete_rounded,
+                color: Colors.white,
+                size: Responsive.isMobileSmall(context) ||
+                        Responsive.isMobileMedium(context) ||
+                        Responsive.isMobileLarge(context)
+                    ? 20
+                    : Responsive.isTabletPortrait(context)
+                        ? 27
+                        : 27,
+              ),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(left: 5),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: Color.fromARGB(179, 1, 1, 36),
+            ),
+            width: Responsive.isMobileSmall(context) ||
+                    Responsive.isMobileMedium(context) ||
+                    Responsive.isMobileLarge(context)
+                ? 35
+                : Responsive.isTabletPortrait(context)
+                    ? 45
+                    : 45,
+            height: Responsive.isMobileSmall(context) ||
+                    Responsive.isMobileMedium(context) ||
+                    Responsive.isMobileLarge(context)
+                ? 30
+                : Responsive.isTabletPortrait(context)
+                    ? 40
+                    : 40,
+            child: IconButton(
+              padding: EdgeInsets.zero,
+              onPressed: () {},
+              icon: Icon(
+                Icons.file_open_outlined,
+                color: Colors.white,
+                size: Responsive.isMobileSmall(context) ||
+                        Responsive.isMobileMedium(context) ||
+                        Responsive.isMobileLarge(context)
+                    ? 20
+                    : Responsive.isTabletPortrait(context)
+                        ? 27
+                        : 27,
+              ),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(left: 5),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: Color.fromARGB(179, 1, 1, 36),
+            ),
+            width: Responsive.isMobileSmall(context) ||
+                    Responsive.isMobileMedium(context) ||
+                    Responsive.isMobileLarge(context)
+                ? 35
+                : Responsive.isTabletPortrait(context)
+                    ? 45
+                    : 45,
+            height: Responsive.isMobileSmall(context) ||
+                    Responsive.isMobileMedium(context) ||
+                    Responsive.isMobileLarge(context)
+                ? 30
+                : Responsive.isTabletPortrait(context)
+                    ? 40
+                    : 40,
+            child: IconButton(
+              padding: EdgeInsets.zero,
+              onPressed: () {},
+              icon: Icon(
+                Icons.feed_outlined,
+                color: Colors.white,
+                size: Responsive.isMobileSmall(context) ||
+                        Responsive.isMobileMedium(context) ||
+                        Responsive.isMobileLarge(context)
+                    ? 23
+                    : Responsive.isTabletPortrait(context)
+                        ? 29
+                        : 29,
+              ),
+            ),
+          ),
           Container(
             margin: EdgeInsets.only(left: 5),
             decoration: BoxDecoration(
@@ -1842,179 +1423,6 @@ class _SharedDocsViewerScreenState extends State<SharedDocsViewerScreen> {
       ),
     );
   }
-
-  // Widget displayIconsBar() {
-  //   return SingleChildScrollView(
-  //     scrollDirection: Axis.horizontal,
-  //     child: Row(
-  //       children: <Widget>[
-  //         Container(
-  //           decoration: BoxDecoration(
-  //             borderRadius: BorderRadius.circular(5),
-  //             color: Color.fromARGB(179, 1, 1, 36),
-  //           ),
-  //           width: Responsive.isMobile(context) ? 36 : 45,
-  //           height: Responsive.isMobile(context) ? 32 : 45,
-  //           child: IconButton(
-  //             padding: EdgeInsets.zero,
-  //             onPressed: () {},
-  //             icon: Icon(
-  //               Icons.shopping_cart_rounded,
-  //               color: Colors.white,
-  //               size: Responsive.isMobile(context) ? 18 : 35,
-  //             ),
-  //           ),
-  //         ),
-  //         Container(
-  //           margin:
-  //               EdgeInsets.only(left: Responsive.isMobile(context) ? 5 : 12),
-  //           decoration: BoxDecoration(
-  //             borderRadius: BorderRadius.circular(5),
-  //             color: Color.fromARGB(179, 1, 1, 36),
-  //           ),
-  //           width: Responsive.isMobile(context) ? 36 : 45,
-  //           height: Responsive.isMobile(context) ? 32 : 45,
-  //           child: IconButton(
-  //             padding: EdgeInsets.zero,
-  //             onPressed: () {},
-  //             icon: Icon(
-  //               Icons.note_alt_outlined,
-  //               color: Colors.white,
-  //               size: Responsive.isMobile(context) ? 20 : 35,
-  //             ),
-  //           ),
-  //         ),
-  //         Container(
-  //           margin:
-  //               EdgeInsets.only(left: Responsive.isMobile(context) ? 5 : 12),
-  //           decoration: BoxDecoration(
-  //             borderRadius: BorderRadius.circular(5),
-  //             color: Color.fromARGB(179, 1, 1, 36),
-  //           ),
-  //           width: Responsive.isMobile(context) ? 36 : 45,
-  //           height: Responsive.isMobile(context) ? 32 : 45,
-  //           child: IconButton(
-  //             padding: EdgeInsets.zero,
-  //             onPressed: () {
-  //               downloadFileToStorage();
-  //             },
-  //             icon: Icon(
-  //               Icons.file_download,
-  //               color: Colors.white,
-  //               size: Responsive.isMobile(context) ? 20 : 35,
-  //             ),
-  //           ),
-  //         ),
-  //         Container(
-  //           margin:
-  //               EdgeInsets.only(left: Responsive.isMobile(context) ? 5 : 12),
-  //           decoration: BoxDecoration(
-  //             borderRadius: BorderRadius.circular(5),
-  //             color: Color.fromARGB(179, 1, 1, 36),
-  //           ),
-  //           width: Responsive.isMobile(context) ? 36 : 45,
-  //           height: Responsive.isMobile(context) ? 32 : 45,
-  //           child: IconButton(
-  //             padding: EdgeInsets.zero,
-  //             onPressed: () {},
-  //             icon: Icon(
-  //               Icons.print_outlined,
-  //               color: Colors.white,
-  //               size: Responsive.isMobile(context) ? 20 : 35,
-  //             ),
-  //           ),
-  //         ),
-  //         Container(
-  //           margin:
-  //               EdgeInsets.only(left: Responsive.isMobile(context) ? 5 : 12),
-  //           decoration: BoxDecoration(
-  //             borderRadius: BorderRadius.circular(5),
-  //             color: Color.fromARGB(179, 1, 1, 36),
-  //           ),
-  //           width: Responsive.isMobile(context) ? 36 : 45,
-  //           height: Responsive.isMobile(context) ? 32 : 45,
-  //           child: IconButton(
-  //             padding: EdgeInsets.zero,
-  //             onPressed: () {},
-  //             icon: Icon(
-  //               Icons.delete_rounded,
-  //               color: Colors.white,
-  //               size: Responsive.isMobile(context) ? 20 : 35,
-  //             ),
-  //           ),
-  //         ),
-  //         Container(
-  //           margin:
-  //               EdgeInsets.only(left: Responsive.isMobile(context) ? 5 : 12),
-  //           decoration: BoxDecoration(
-  //             borderRadius: BorderRadius.circular(5),
-  //             color: Color.fromARGB(179, 1, 1, 36),
-  //           ),
-  //           width: Responsive.isMobile(context) ? 36 : 50,
-  //           height: Responsive.isMobile(context) ? 32 : 50,
-  //           child: IconButton(
-  //             padding: EdgeInsets.zero,
-  //             onPressed: () {},
-  //             icon: Icon(
-  //               Icons.file_open_outlined,
-  //               color: Colors.white,
-  //               size: Responsive.isMobile(context) ? 20 : 35,
-  //             ),
-  //           ),
-  //         ),
-  //         Container(
-  //           margin:
-  //               EdgeInsets.only(left: Responsive.isMobile(context) ? 5 : 12),
-  //           decoration: BoxDecoration(
-  //             borderRadius: BorderRadius.circular(5),
-  //             color: Color.fromARGB(179, 1, 1, 36),
-  //           ),
-  //           width: Responsive.isMobile(context) ? 36 : 45,
-  //           height: Responsive.isMobile(context) ? 32 : 45,
-  //           child: IconButton(
-  //             padding: EdgeInsets.zero,
-  //             onPressed: () {},
-  //             icon: Icon(
-  //               Icons.feed_outlined,
-  //               color: Colors.white,
-  //               size: Responsive.isMobile(context) ? 23 : 35,
-  //             ),
-  //           ),
-  //         ),
-  //         Container(
-  //           margin:
-  //               EdgeInsets.only(left: Responsive.isMobile(context) ? 5 : 12),
-  //           decoration: BoxDecoration(
-  //             borderRadius: BorderRadius.circular(5),
-  //             color: Color.fromARGB(179, 1, 1, 36),
-  //           ),
-  //           width: Responsive.isMobile(context) ? 36 : 45,
-  //           height: Responsive.isMobile(context) ? 32 : 45,
-  //           child: IconButton(
-  //             padding: EdgeInsets.zero,
-  //             onPressed: () {
-  //               if (!isBookMarked) {
-  //                 addBookMarkDocument();
-  //                 isBookMarked = true;
-  //               }
-  //             },
-  //             icon: isBookMarked
-  //                 ? Icon(
-  //                     Icons.star,
-  //                     color: Colors.amber,
-  //                     size: Responsive.isMobile(context) ? 22 : 35,
-  //                   )
-  //                 : Icon(
-  //                     Icons.star_border,
-  //                     color: Colors.white,
-  //                     size: Responsive.isMobile(context) ? 22 : 35,
-  //                   ),
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
 
   // -------- PROCESS MP3 ------------//
   Future<void> setAudio() async {
@@ -2363,19 +1771,19 @@ class _SharedDocsViewerScreenState extends State<SharedDocsViewerScreen> {
                         final dynamic tooltip = _toolTipKey.currentState;
                         tooltip?.ensureTooltipVisible();
                       } else {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) {
-                        //       return BlocProvider(
-                        //         create: (context) =>
-                        //             DocumentBloc(username, token),
-                        //         child: SearchedDocumentListScreen(
-                        //             searchValue: trimmedValue),
-                        //       );
-                        //     },
-                        //   ),
-                        // );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return BlocProvider(
+                                create: (context) =>
+                                    DocumentBloc(username, token),
+                                child: SearchedDocumentListScreen(
+                                    searchValue: trimmedValue),
+                              );
+                            },
+                          ),
+                        );
                       }
                     },
                     child: Tooltip(

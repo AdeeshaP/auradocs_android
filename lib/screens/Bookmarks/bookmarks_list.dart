@@ -4,6 +4,7 @@ import 'package:auradocs_android/API-Services/api_service.dart';
 import 'package:auradocs_android/Bloc/document_event.dart';
 import 'package:auradocs_android/Models/users.dart';
 import 'package:auradocs_android/screens/Bookmarks/view_bookmarked_doc.dart';
+import 'package:auradocs_android/screens/Document-Search/search_list.dart';
 import 'package:auradocs_android/screens/Sliders/landing_page.dart';
 import 'package:auradocs_android/screens/home_screen.dart';
 import 'package:auradocs_android/utils/alert_dialogs.dart';
@@ -1049,19 +1050,19 @@ class _FavoriteDocListScreenState extends State<FavoriteDocListScreen> {
                         final dynamic tooltip = _toolTipKey.currentState;
                         tooltip?.ensureTooltipVisible();
                       } else {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) {
-                        //       return BlocProvider(
-                        //         create: (context) =>
-                        //             DocumentBloc(username, token),
-                        //         child: SearchedDocumentListScreen(
-                        //             searchValue: trimmedValue),
-                        //       );
-                        //     },
-                        //   ),
-                        // );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return BlocProvider(
+                                create: (context) =>
+                                    DocumentBloc(username, token),
+                                child: SearchedDocumentListScreen(
+                                    searchValue: trimmedValue),
+                              );
+                            },
+                          ),
+                        );
                       }
                     },
                     child: Tooltip(

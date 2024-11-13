@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:auradocs_android/API-Services/api_service.dart';
+import 'package:auradocs_android/Bloc/document_bloc.dart';
+import 'package:auradocs_android/screens/Document-Search/search_list.dart';
 import 'package:auradocs_android/screens/File-Picker/file_picker_screen.dart';
 import 'package:auradocs_android/screens/Pending-Docs/pending_doc_list.dart';
 import 'package:auradocs_android/screens/contact_us_screen.dart';
@@ -9,6 +11,7 @@ import 'package:auradocs_android/utils/constants.dart';
 import 'package:auradocs_android/utils/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mime/mime.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Models/users.dart';
@@ -875,19 +878,19 @@ class _UploadFileListScreenState extends State<UploadFileListScreen> {
                         final dynamic tooltip = _toolTipKey.currentState;
                         tooltip?.ensureTooltipVisible();
                       } else {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) {
-                        //       return BlocProvider(
-                        //         create: (context) =>
-                        //             DocumentBloc(username, token),
-                        //         child: SearchedDocumentListScreen(
-                        //             searchValue: trimmedValue),
-                        //       );
-                        //     },
-                        //   ),
-                        // );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return BlocProvider(
+                                create: (context) =>
+                                    DocumentBloc(username, token),
+                                child: SearchedDocumentListScreen(
+                                    searchValue: trimmedValue),
+                              );
+                            },
+                          ),
+                        );
                       }
                     },
                     child: Tooltip(

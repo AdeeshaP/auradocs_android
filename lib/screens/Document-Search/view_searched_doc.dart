@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:auradocs_android/API-Services/api_service.dart';
 import 'package:auradocs_android/Bloc/document_bloc.dart';
@@ -10,6 +9,7 @@ import 'package:auradocs_android/screens/Sliders/landing_page.dart';
 import 'package:auradocs_android/screens/contact_us_screen.dart';
 import 'package:auradocs_android/screens/full-screen-viewer/full_screen_viewer.dart';
 import 'package:auradocs_android/screens/home_screen.dart';
+import 'package:auradocs_android/utils/alert_dialogs.dart';
 import 'package:auradocs_android/utils/constants.dart';
 import 'package:auradocs_android/utils/responsive.dart';
 import 'package:chewie/chewie.dart';
@@ -25,34 +25,32 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:video_player/video_player.dart';
 
-import '../../utils/alert_dialogs.dart';
-
-class BookmarkedDocumentViewScreen extends StatefulWidget {
-  const BookmarkedDocumentViewScreen({
+class ViewSearchedDocumentScreen extends StatefulWidget {
+  const ViewSearchedDocumentScreen({
     super.key,
     required this.fileNames,
     required this.indexOfCurrent,
-    required this.removeBookmarkCallBack,
+    required this.searchValue,
   });
 
   final List<dynamic> fileNames;
+  final String searchValue;
   final int indexOfCurrent;
-  final Function removeBookmarkCallBack;
 
   @override
-  State<BookmarkedDocumentViewScreen> createState() =>
-      _BookmarkedDocumentViewScreenState();
+  State<ViewSearchedDocumentScreen> createState() =>
+      _ViewSearchedDocumentScreenState();
 }
 
-class _BookmarkedDocumentViewScreenState
-    extends State<BookmarkedDocumentViewScreen> {
+class _ViewSearchedDocumentScreenState
+    extends State<ViewSearchedDocumentScreen> {
   double _scale = 1.0;
   String textFileContent = "";
   late SharedPreferences _storage;
   Map<String, dynamic>? userObj;
   String username = "";
   String token = "";
-  List authentication = [];
+  String compnyCode = "";
   final AudioPlayer audioplayer = AudioPlayer();
   bool isPlaying = false;
   Duration duration = Duration.zero;
@@ -69,10 +67,8 @@ class _BookmarkedDocumentViewScreenState
   File? _pdffile;
   File? _mp3File;
   List<dynamic> valList = [];
-  final GlobalKey<SfPdfViewerState> _pdfViewerKey = GlobalKey();
   String operation = "";
   bool isBookMarked = false;
-  List<dynamic> valueList = [];
   List<dynamic> completedTasks = [];
   List<dynamic> pendingTaskById = [];
   String requestUser1 = "";
@@ -87,7 +83,6 @@ class _BookmarkedDocumentViewScreenState
   String comment2 = "";
   int templateId = 0;
   int taskId = 0;
-  int bookmarkId = 0;
   String? pendingTaskStatus;
   String completedTaskstatus = "";
   String pendingstatus = "";
@@ -96,27 +91,31 @@ class _BookmarkedDocumentViewScreenState
   VideoPlayerController? _videoPlayerController;
   ChewieController? _chewieController;
   File? _mp4File;
-  String compnyCode = "";
   int fileIndex = 0;
   String trimmedValue = "";
   GlobalKey _toolTipKey = GlobalKey();
+  List authentication = [];
 
   @override
   void initState() {
     super.initState();
     fileIndex = widget.indexOfCurrent;
+
     viewSearchedIndexedDocument(
-        widget.fileNames[fileIndex]['documentId'], fileIndex);
+        widget.fileNames[fileIndex]['ImageId'], fileIndex);
   }
 
   @override
   void dispose() {
     audioplayer.dispose();
+    if (_videoPlayerController != null) {
+      _videoPlayerController!.dispose();
+    }
     super.dispose();
   }
 
 // -------- GET API - get selected document to view -------------//
-  Future<void> viewSearchedIndexedDocument(int docId, int fileIndex2) async {
+  Future<void> viewSearchedIndexedDocument(String docId, int index2) async {
     _storage = await SharedPreferences.getInstance();
     userObj = jsonDecode(_storage.getString('user_data')!);
     token = _storage.getString('token')!;
@@ -125,18 +124,21 @@ class _BookmarkedDocumentViewScreenState
     authentication =
         authListJson != null ? List<String>.from(jsonDecode(authListJson)) : [];
 
+    print("Authentication2: $authentication");
+    if (widget.searchValue != "") {
+      searchController.text = widget.searchValue;
+    }
     if (mounted) {
       setState(() {
         username = userObj!["value"]["userName"];
-        documentId = docId;
+        documentId = int.parse(docId);
       });
     }
+
     var response =
         await ApiService.openViewerSearch(documentId, username, token);
 
     responsedata = jsonDecode(response.body);
-
-    print(responsedata);
 
     if (responsedata!['code'] == 200) {
       setState(() {
@@ -154,18 +156,18 @@ class _BookmarkedDocumentViewScreenState
         context,
         Icons.warning_amber_sharp,
         "You don't have enough privileges to view this document.",
-        goToNextDocument,
+        backToNextDocument,
         Color.fromARGB(255, 237, 172, 10),
-        widget.fileNames.length > fileIndex2 + 1 ? "NEXT" : "OK",
+        widget.fileNames.length > index2 + 1 ? "NEXT" : "OK",
       );
     } else if (responsedata!['code'] == 500) {
       showWarningDialogPopupThree(
         context,
         Icons.warning,
         "Server error! Please contact auraDOCS administrator.",
-        goToNextDocument,
+        backToNextDocument,
         Color.fromARGB(255, 237, 172, 10),
-        widget.fileNames.length > fileIndex2 + 1 ? "NEXT" : "OK",
+        widget.fileNames.length > index2 + 1 ? "NEXT" : "OK",
       );
     }
 
@@ -178,7 +180,7 @@ class _BookmarkedDocumentViewScreenState
 
     if (mimeType == 'video/mp4') {
       Directory tempDirec = await getTemporaryDirectory();
-      _mp4File = File('${tempDirec.path}/temp.mp4');
+      _mp4File = File('${tempDirec.path}/temp5.mp4');
       await _mp4File!.writeAsBytes(imageValueBytes!);
       _videoPlayerController = VideoPlayerController.file(_mp4File!);
       await _videoPlayerController!.initialize();
@@ -201,15 +203,13 @@ class _BookmarkedDocumentViewScreenState
       templaetName,
       token,
     );
-    print('Response body: ${response.body.toString()}');
 
     if (response.statusCode == 200) {
-      print("$operation passed to server");
     } else if (response.statusCode == 500 || response.statusCode == 501) {
       showWarningDialogPopup(
         context,
         Icons.warning,
-        "Internal server error! Please contact auraDOCS administrator.",
+        "Server error! Please contact auraDOCS administrator.",
         okRecognition,
         Color.fromARGB(255, 237, 172, 10),
       );
@@ -257,13 +257,10 @@ class _BookmarkedDocumentViewScreenState
     if (response4 != null && response4.statusCode == 200) {
       responsedata = jsonDecode(response4.body);
 
-      print('Response body: ${response4.body.toString()}');
-
       if (mounted)
         setState(() {
           completedTasks = responsedata!['value'];
         });
-      print(completedTasks);
     } else if (response4.statusCode == 500) {
       showWarningDialogPopup(
         context,
@@ -298,52 +295,33 @@ class _BookmarkedDocumentViewScreenState
     }
   }
 
-  // -------- GET API - Delete selecetd grid item -------------//
-  Future<void> removeBookMarkedDoc(int bookmarkID) async {
-    _storage = await SharedPreferences.getInstance();
-    token = _storage.getString('token')!;
-
-    setState(() {
-      bookmarkId = bookmarkID;
-    });
-
-    if (bookmarkId != "") {
-      var response = await ApiService.removeBookmark(
-        bookmarkId,
-        token,
-      );
-
-      if (response.statusCode == 200) {
-        responsedata = jsonDecode(response.body);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Bookmark removed successfully..'),
-          ),
-        );
-        widget.removeBookmarkCallBack();
-      }
-    }
-  }
-
   void okRecognition() {
     closeDialog(context);
   }
 
-  void goToNextDocument() {
+  void backToNextDocument() {
     closeDialog(context);
     if (widget.fileNames.length > fileIndex + 1) {
       setState(() {
         fileIndex += 1;
       });
       viewSearchedIndexedDocument(
-          widget.fileNames[fileIndex]['documentId'], fileIndex);
+          widget.fileNames[fileIndex]['ImageId'], fileIndex);
     } else {
       okRecognitionAndGoBackScreen();
     }
   }
 
   void okRecognitionAndGoBackScreen() {
-    Navigator.pop(context);
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BlocProvider(
+          create: (context) => DocumentBloc(username, token),
+          child: SearchedDocumentListScreen(searchValue: trimmedValue),
+        ),
+      ),
+    );
   }
 
   void _zoomIn() {
@@ -367,7 +345,6 @@ class _BookmarkedDocumentViewScreenState
         if (didPop) {
           return;
         }
-
         new Future(() => true);
       },
       child: SafeArea(
@@ -375,7 +352,6 @@ class _BookmarkedDocumentViewScreenState
           resizeToAvoidBottomInset: false,
           body: Container(
             width: size.width,
-            height: size.height,
             child: Column(
               children: <Widget>[
                 getSearchBoxWidget(),
@@ -481,96 +457,94 @@ class _BookmarkedDocumentViewScreenState
                                               ? size.height * 0.048
                                               : size.height * 0.055,
                                       color: Colors.black26,
-                                      child: Row(
-                                        children: <Widget>[
-                                          Expanded(flex: 10, child: Text("")),
-                                          // ------------ Zoom-in and Zoom-out Buttons-------------
-                                          Expanded(
-                                            flex: 2,
-                                            child: GestureDetector(
-                                              onTap: _zoomIn,
-                                              child: Icon(
-                                                Icons.add,
-                                                size: Responsive.isMobileSmall(
-                                                        context)
-                                                    ? 20
-                                                    : Responsive.isMobileMedium(
-                                                                context) ||
-                                                            Responsive
-                                                                .isMobileLarge(
-                                                                    context)
-                                                        ? 25
-                                                        : Responsive
-                                                                .isTabletPortrait(
-                                                                    context)
-                                                            ? 30
-                                                            : 29,
-                                                color: Colors.white,
-                                              ),
+                                      child: Row(children: <Widget>[
+                                        Expanded(flex: 10, child: Text("")),
+                                        // ------------ Zoom-in and Zoom-out Buttons-------------
+                                        Expanded(
+                                          flex: 2,
+                                          child: GestureDetector(
+                                            onTap: _zoomIn,
+                                            child: Icon(
+                                              Icons.add,
+                                              size: Responsive.isMobileSmall(
+                                                      context)
+                                                  ? 20
+                                                  : Responsive.isMobileMedium(
+                                                              context) ||
+                                                          Responsive
+                                                              .isMobileLarge(
+                                                                  context)
+                                                      ? 25
+                                                      : Responsive
+                                                              .isTabletPortrait(
+                                                                  context)
+                                                          ? 30
+                                                          : 29,
+                                              color: Colors.white,
                                             ),
                                           ),
-                                          Expanded(
-                                            flex: 2,
-                                            child: GestureDetector(
-                                              onTap: _zoomOut,
-                                              child: Icon(
-                                                Icons.remove,
-                                                size: Responsive.isMobileSmall(
-                                                        context)
-                                                    ? 20
-                                                    : Responsive.isMobileMedium(
-                                                                context) ||
-                                                            Responsive
-                                                                .isMobileLarge(
-                                                                    context)
-                                                        ? 25
-                                                        : Responsive
-                                                                .isTabletPortrait(
-                                                                    context)
-                                                            ? 30
-                                                            : 29,
-                                                color: Colors.white,
-                                              ),
+                                        ),
+                                        Expanded(
+                                          flex: 2,
+                                          child: GestureDetector(
+                                            onTap: _zoomOut,
+                                            child: Icon(
+                                              Icons.remove,
+                                              size: Responsive.isMobileSmall(
+                                                      context)
+                                                  ? 20
+                                                  : Responsive.isMobileMedium(
+                                                              context) ||
+                                                          Responsive
+                                                              .isMobileLarge(
+                                                                  context)
+                                                      ? 25
+                                                      : Responsive
+                                                              .isTabletPortrait(
+                                                                  context)
+                                                          ? 30
+                                                          : 29,
+                                              color: Colors.white,
                                             ),
                                           ),
-                                          // ------------ Full Screen Mode Button-------------
-                                          Expanded(
-                                            flex: 4,
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        FullScreenViewer(
-                                                      base64String: metadata,
-                                                      mimeT: mimeType,
-                                                    ),
+                                        ),
+                                        // ------------ Full Screen Mode Button-------------
+                                        Expanded(
+                                          flex: 4,
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      FullScreenViewer(
+                                                    base64String: metadata,
+                                                    mimeT: mimeType,
                                                   ),
-                                                );
-                                              },
-                                              child: Icon(
-                                                Icons.fullscreen,
-                                                size: Responsive.isMobileSmall(
-                                                        context)
-                                                    ? 20
-                                                    : Responsive.isMobileMedium(
-                                                                context) ||
-                                                            Responsive
-                                                                .isMobileLarge(
-                                                                    context)
-                                                        ? 27
-                                                        : Responsive
-                                                                .isTabletPortrait(
-                                                                    context)
-                                                            ? 30
-                                                            : 29,
-                                                color: Colors.white,
-                                              ),
+                                                ),
+                                              );
+                                            },
+                                            child: Icon(
+                                              Icons.fullscreen,
+                                              size: Responsive.isMobileSmall(
+                                                      context)
+                                                  ? 20
+                                                  : Responsive.isMobileMedium(
+                                                              context) ||
+                                                          Responsive
+                                                              .isMobileLarge(
+                                                                  context)
+                                                      ? 27
+                                                      : Responsive
+                                                              .isTabletPortrait(
+                                                                  context)
+                                                          ? 30
+                                                          : 29,
+                                              color: Colors.white,
                                             ),
-                                          )
-                                        ],
-                                      ),
+                                          ),
+                                        )
+                                      ]),
                                     ),
                                     Container(
                                       child: Padding(
@@ -591,7 +565,7 @@ class _BookmarkedDocumentViewScreenState
                                                               .isTabletPortrait(
                                                                   context)
                                                           ? size.height * 0.55
-                                                          : size.height * 0.42,
+                                                          : size.height * 0.41,
                                           width: size.width * 0.9,
                                           child: ClipRRect(
                                             clipBehavior: Clip.hardEdge,
@@ -607,17 +581,16 @@ class _BookmarkedDocumentViewScreenState
                                       padding:
                                           EdgeInsets.symmetric(horizontal: 25),
                                       width: double.infinity,
-                                      height: Responsive.isMobileSmall(context)
+                                      height: Responsive.isMobileSmall(
+                                                  context) ||
+                                              Responsive.isMobileMedium(context)
                                           ? size.width * 0.08
-                                          : Responsive.isMobileMedium(
-                                                      context) ||
-                                                  Responsive.isMobileLarge(
-                                                      context)
+                                          : Responsive.isMobileLarge(context)
                                               ? size.width * 0.09
                                               : Responsive.isTabletPortrait(
                                                       context)
                                                   ? size.width * 0.06
-                                                  : size.width * 0.043,
+                                                  : size.width * 0.045,
                                       child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceEvenly,
@@ -653,20 +626,18 @@ class _BookmarkedDocumentViewScreenState
                                                       viewSearchedIndexedDocument(
                                                           widget.fileNames[
                                                                   fileIndex]
-                                                              ['documentId'],
+                                                              ['ImageId'],
                                                           fileIndex);
-                                                      documentId =
+                                                      documentId = int.parse(
                                                           widget.fileNames[
                                                                   fileIndex]
-                                                              ['documentId'];
+                                                              ['ImageId']);
                                                     });
-                                                  print(documentId);
                                                 }
                                               }),
                                           Text(
                                             widget.fileNames[fileIndex]
-                                                    ['documentId']
-                                                .toString(),
+                                                ['ImageId'],
                                             style: TextStyle(
                                                 color: Colors.white,
                                                 fontSize: Responsive
@@ -716,12 +687,12 @@ class _BookmarkedDocumentViewScreenState
                                                     viewSearchedIndexedDocument(
                                                         widget.fileNames[
                                                                 fileIndex]
-                                                            ['documentId'],
+                                                            ['ImageId'],
                                                         fileIndex);
-                                                    documentId =
+                                                    documentId = int.parse(
                                                         widget.fileNames[
                                                                 fileIndex]
-                                                            ['documentId'];
+                                                            ['ImageId']);
                                                   });
                                               }
                                             },
@@ -793,7 +764,7 @@ class _BookmarkedDocumentViewScreenState
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsets.all(0),
+                              padding: const EdgeInsets.all(0),
                               child: Column(
                                 children: [
                                   Padding(
@@ -829,11 +800,10 @@ class _BookmarkedDocumentViewScreenState
                                             Responsive.isMobileMedium(
                                                 context) ||
                                             Responsive.isMobileLarge(context)
-                                        ? size.width * 0.66
+                                        ? size.height * 0.34
                                         : Responsive.isTabletPortrait(context)
                                             ? size.height * 0.8
                                             : size.height * 0.6,
-                                    // height: 260,
                                     child: Scrollbar(
                                       thickness: 5,
                                       child: SingleChildScrollView(
@@ -847,7 +817,6 @@ class _BookmarkedDocumentViewScreenState
                                                             horizontal: 8,
                                                             vertical: 1),
                                                     child: Container(
-                                                      // height: size.height * 0.16,
                                                       height: indexValues
                                                                   .length >
                                                               2
@@ -1020,11 +989,8 @@ class _BookmarkedDocumentViewScreenState
                                                                       ),
                                                                     ),
                                                                     Divider(
-                                                                        height: Responsive.isMobileSmall(context) ||
-                                                                                Responsive.isMobileMedium(context) ||
-                                                                                Responsive.isMobileLarge(context)
-                                                                            ? 2
-                                                                            : 6),
+                                                                        height:
+                                                                            2),
                                                                   ],
                                                                 );
                                                               },
@@ -1036,6 +1002,430 @@ class _BookmarkedDocumentViewScreenState
                                                   )
                                                 : SizedBox(
                                                     height: size.height * 0.02),
+
+                                            // -------------------------COMPLETED TASKS -------------------------//
+
+                                            // completedTasks.isNotEmpty
+                                            //     ? Padding(
+                                            //         padding: EdgeInsets.only(
+                                            //             left: 8,
+                                            //             right: 8,
+                                            //             top: 4),
+                                            //         child: Container(
+                                            //           height: size.height * 0.08,
+                                            //           padding:
+                                            //               EdgeInsets.only(top: 5),
+                                            //           decoration: BoxDecoration(
+                                            //             color: Colors.white,
+                                            //             border: Border.all(
+                                            //                 color: borderColor,
+                                            //                 width: 1.0),
+                                            //           ),
+                                            //           width: double.infinity,
+                                            //           child:
+                                            //               SingleChildScrollView(
+                                            //             scrollDirection:
+                                            //                 scrollDirection,
+                                            //             child: ListView.builder(
+                                            //               physics:
+                                            //                   NeverScrollableScrollPhysics(),
+                                            //               shrinkWrap: true,
+                                            //               itemCount:
+                                            //                   completedTasks
+                                            //                       .length,
+                                            //               // itemCount: 1,
+                                            //               itemBuilder:
+                                            //                   (BuildContext
+                                            //                           context,
+                                            //                       int index) {
+                                            //                 final item =
+                                            //                     completedTasks[
+                                            //                         index];
+                                            //                 approvedUser1 = item[
+                                            //                     'approvedUser'];
+                                            //                 remark1 =
+                                            //                     item['remark'];
+                                            //                 completedTaskstatus =
+                                            //                     item['status'];
+                                            //                 comment1 =
+                                            //                     item['comment'];
+
+                                            //                 return Column(
+                                            //                   crossAxisAlignment:
+                                            //                       CrossAxisAlignment
+                                            //                           .start,
+                                            //                   children: [
+                                            //                     Row(
+                                            //                       children: [
+                                            //                         Expanded(
+                                            //                           flex: 7,
+                                            //                           child:
+                                            //                               Padding(
+                                            //                             padding: EdgeInsets.symmetric(
+                                            //                                 horizontal:
+                                            //                                     8,
+                                            //                                 vertical:
+                                            //                                     3),
+                                            //                             child:
+                                            //                                 Text(
+                                            //                               "Approved By : $approvedUser1",
+                                            //                               style:
+                                            //                                   TextStyle(
+                                            //                                 fontSize: Responsive.isMobileSmall(context) || Responsive.isMobileMedium(context) || Responsive.isMobileLarge(context)
+                                            //                                     ? 14
+                                            //                                     : Responsive.isTabletPortrait(context)
+                                            //                                         ? 17
+                                            //                                         : 17,
+                                            //                                 color:
+                                            //                                     Colors.black87,
+                                            //                               ),
+                                            //                             ),
+                                            //                           ),
+                                            //                         ),
+                                            //                         Expanded(
+                                            //                           flex: 4,
+                                            //                           child:
+                                            //                               Padding(
+                                            //                             padding: EdgeInsets.symmetric(
+                                            //                                 horizontal:
+                                            //                                     8,
+                                            //                                 vertical:
+                                            //                                     3),
+                                            //                             child:
+                                            //                                 Row(
+                                            //                               mainAxisAlignment:
+                                            //                                   MainAxisAlignment.start,
+                                            //                               children: [
+                                            //                                 Container(
+                                            //                                   height:
+                                            //                                       8,
+                                            //                                   width:
+                                            //                                       8,
+                                            //                                   decoration:
+                                            //                                       BoxDecoration(
+                                            //                                     color: completedTaskstatus == "accepted"
+                                            //                                         ? Colors.green
+                                            //                                         : completedTaskstatus == "pending"
+                                            //                                             ? Colors.orange
+                                            //                                             : Colors.red,
+                                            //                                     shape: BoxShape.circle,
+                                            //                                     border: Border.all(
+                                            //                                       color: completedTaskstatus == "accepted"
+                                            //                                           ? Colors.green
+                                            //                                           : completedTaskstatus == "pending"
+                                            //                                               ? Colors.orange
+                                            //                                               : Colors.red,
+                                            //                                     ),
+                                            //                                   ),
+                                            //                                 ),
+                                            //                                 SizedBox(
+                                            //                                     width: 5),
+                                            //                                 Text(
+                                            //                                   completedTaskstatus,
+                                            //                                   style:
+                                            //                                       GoogleFonts.lato(
+                                            //                                     textStyle: Theme.of(context).textTheme.headline4,
+                                            //                                     fontSize: Responsive.isMobileSmall(context) || Responsive.isMobileMedium(context) || Responsive.isMobileLarge(context)
+                                            //                                         ? 14
+                                            //                                         : Responsive.isTabletPortrait(context)
+                                            //                                             ? 17
+                                            //                                             : 17,
+                                            //                                     fontWeight: FontWeight.w900,
+                                            //                                     color: completedTaskstatus == "accepted"
+                                            //                                         ? Colors.green
+                                            //                                         : completedTaskstatus == "pending"
+                                            //                                             ? Colors.orange[300]
+                                            //                                             : Colors.red,
+                                            //                                   ),
+                                            //                                 ),
+                                            //                               ],
+                                            //                             ),
+                                            //                           ),
+                                            //                         ),
+                                            //                       ],
+                                            //                     ),
+                                            //                     Padding(
+                                            //                       padding: EdgeInsets
+                                            //                           .symmetric(
+                                            //                               horizontal:
+                                            //                                   8,
+                                            //                               vertical:
+                                            //                                   3),
+                                            //                       child: Text(
+                                            //                         "Comment : $comment1",
+                                            //                         style:
+                                            //                             TextStyle(
+                                            //                           fontSize: Responsive.isMobileSmall(context) ||
+                                            //                                   Responsive.isMobileMedium(context) ||
+                                            //                                   Responsive.isMobileLarge(context)
+                                            //                               ? 14
+                                            //                               : Responsive.isTabletPortrait(context)
+                                            //                                   ? 17
+                                            //                                   : 17,
+                                            //                           color: Colors
+                                            //                               .black87,
+                                            //                         ),
+                                            //                       ),
+                                            //                     ),
+                                            //                     Divider(
+                                            //                         height: 4),
+                                            //                   ],
+                                            //                 );
+                                            //               },
+                                            //             ),
+                                            //           ),
+                                            //         ),
+                                            //       )
+                                            //     : Container(),
+
+                                            // -------------------------PENDING TASKS TEXT FIELDS-------------------------//
+                                            // pendingTaskById.isNotEmpty
+                                            //     ? Padding(
+                                            //         padding: EdgeInsets.symmetric(
+                                            //             horizontal: 7,
+                                            //             vertical: 5),
+                                            //         child: Container(
+                                            //           // height: size.height * 0.6,
+                                            //           width: double.infinity,
+                                            //           child: ListView.builder(
+                                            //             scrollDirection:
+                                            //                 scrollDirection,
+                                            //             shrinkWrap: true,
+                                            //             itemCount: 1,
+                                            //             // itemCount: pendingTaskById.length,
+                                            //             itemBuilder:
+                                            //                 (BuildContext context,
+                                            //                     int index) {
+                                            //               List<String>
+                                            //                   pendingTaskStatuses =
+                                            //                   [
+                                            //                 'pending',
+                                            //                 'accepted',
+                                            //                 'rejected'
+                                            //               ];
+                                            //               final item =
+                                            //                   pendingTaskById[
+                                            //                       index];
+
+                                            //               // approvedUser2 =
+                                            //               //     item['approvedUser'];
+                                            //               // remark2 = item['remark'];
+                                            //               pendingstatus =
+                                            //                   item['status'];
+                                            //               // comment2 = item['comment'];
+                                            //               taskId = item['id'];
+
+                                            //               if (pendingstatus ==
+                                            //                   "pending") {
+                                            //                 return Form(
+                                            //                   key: _formKey4,
+                                            //                   child: Column(
+                                            //                     children: [
+                                            //                       DropdownButtonFormField<
+                                            //                           String>(
+                                            //                         // isDense: true,
+                                            //                         decoration:
+                                            //                             InputDecoration(
+                                            //                           contentPadding:
+                                            //                               EdgeInsets
+                                            //                                   .symmetric(
+                                            //                             horizontal:
+                                            //                                 8,
+                                            //                           ),
+                                            //                           border:
+                                            //                               OutlineInputBorder(),
+                                            //                         ),
+                                            //                         hint: Text(
+                                            //                           "Select the status...",
+                                            //                           style:
+                                            //                               TextStyle(
+                                            //                             color: Colors
+                                            //                                 .black54,
+                                            //                             fontSize: Responsive.isMobileSmall(context) ||
+                                            //                                     Responsive.isMobileMedium(context) ||
+                                            //                                     Responsive.isMobileLarge(context)
+                                            //                                 ? 15
+                                            //                                 : Responsive.isTabletPortrait(context)
+                                            //                                     ? 18
+                                            //                                     : 17,
+                                            //                           ),
+                                            //                         ),
+                                            //                         icon: Icon(Icons
+                                            //                             .arrow_drop_down),
+                                            //                         iconSize: 24,
+                                            //                         elevation: 8,
+                                            //                         style: TextStyle(
+                                            //                             color: Colors
+                                            //                                 .black),
+                                            //                         value:
+                                            //                             pendingTaskStatus,
+                                            //                         onChanged:
+                                            //                             (String?
+                                            //                                 newValue) {
+                                            //                           if (newValue !=
+                                            //                               null) {
+                                            //                             setState(
+                                            //                                 () {
+                                            //                               pendingTaskStatus =
+                                            //                                   newValue;
+                                            //                             });
+                                            //                           }
+                                            //                         },
+                                            //                         items: pendingTaskStatuses.map<
+                                            //                             DropdownMenuItem<
+                                            //                                 String>>((String
+                                            //                             value) {
+                                            //                           return DropdownMenuItem<
+                                            //                               String>(
+                                            //                             value:
+                                            //                                 value,
+                                            //                             child: Text(
+                                            //                                 value),
+                                            //                           );
+                                            //                         }).toList(),
+                                            //                         // validator: (value) =>
+                                            //                         //     value == null ||
+                                            //                         //             value
+                                            //                         //                 .isEmpty
+                                            //                         //         ? 'Please select the status'
+                                            //                         //         : null,
+                                            //                       ),
+                                            //                       Padding(
+                                            //                         padding: EdgeInsets
+                                            //                             .symmetric(
+                                            //                                 vertical:
+                                            //                                     5),
+                                            //                         child:
+                                            //                             TextFormField(
+                                            //                           autovalidateMode:
+                                            //                               AutovalidateMode
+                                            //                                   .always,
+                                            //                           textInputAction:
+                                            //                               TextInputAction
+                                            //                                   .next,
+                                            //                           controller:
+                                            //                               commentController,
+                                            //                           onSaved:
+                                            //                               (newValue) {
+                                            //                             commentController
+                                            //                                     .text ==
+                                            //                                 newValue;
+                                            //                           },
+                                            //                           decoration:
+                                            //                               InputDecoration(
+                                            //                             contentPadding: EdgeInsets.symmetric(
+                                            //                                 vertical:
+                                            //                                     1,
+                                            //                                 horizontal:
+                                            //                                     5),
+                                            //                             border: OutlineInputBorder(
+                                            //                                 borderRadius:
+                                            //                                     BorderRadius.circular(2)),
+                                            //                             labelText:
+                                            //                                 "Comment",
+                                            //                           ),
+                                            //                           validator:
+                                            //                               (valuex) {
+                                            //                             if (valuex!
+                                            //                                     .isEmpty &&
+                                            //                                 _validate) {
+                                            //                               return 'Comment is required';
+                                            //                             }
+                                            //                             return null;
+                                            //                           },
+                                            //                           keyboardType:
+                                            //                               TextInputType
+                                            //                                   .text,
+                                            //                         ),
+                                            //                       ),
+                                            //                       SizedBox(
+                                            //                           height: 10),
+                                            //                       SizedBox(
+                                            //                         width: Responsive.isMobileSmall(context) ||
+                                            //                                 Responsive.isMobileMedium(
+                                            //                                     context) ||
+                                            //                                 Responsive.isMobileLarge(
+                                            //                                     context) ||
+                                            //                                 Responsive.isTabletPortrait(
+                                            //                                     context)
+                                            //                             ? size.width *
+                                            //                                 0.25
+                                            //                             : size.width *
+                                            //                                 0.2,
+                                            //                         height: Responsive.isMobileSmall(context) ||
+                                            //                                 Responsive.isMobileMedium(
+                                            //                                     context) ||
+                                            //                                 Responsive.isMobileLarge(
+                                            //                                     context)
+                                            //                             ? size.width *
+                                            //                                 0.1
+                                            //                             : Responsive.isTabletPortrait(
+                                            //                                     context)
+                                            //                                 ? size.width *
+                                            //                                     0.06
+                                            //                                 : size.width *
+                                            //                                     0.05,
+                                            //                         child:
+                                            //                             TextButton(
+                                            //                           child: Text(
+                                            //                             'Submit',
+                                            //                             style:
+                                            //                                 TextStyle(
+                                            //                               fontWeight:
+                                            //                                   FontWeight.bold,
+                                            //                               fontSize: Responsive.isMobileSmall(context) ||
+                                            //                                       Responsive.isMobileMedium(context) ||
+                                            //                                       Responsive.isMobileLarge(context)
+                                            //                                   ? 15
+                                            //                                   : Responsive.isTabletPortrait(context)
+                                            //                                       ? 18
+                                            //                                       : 20,
+                                            //                               color: Colors
+                                            //                                   .white,
+                                            //                             ),
+                                            //                           ),
+                                            //                           onPressed:
+                                            //                               () {
+                                            //                             setState(
+                                            //                                 () {
+                                            //                               _validate =
+                                            //                                   true;
+                                            //                             });
+                                            //                             if (_formKey4
+                                            //                                 .currentState!
+                                            //                                 .validate()) {
+                                            //                               updatePendingTasksStatus(
+                                            //                                   taskId,
+                                            //                                   pendingTaskStatus!,
+                                            //                                   commentController.text);
+                                            //                             }
+                                            //                           },
+                                            //                           style:
+                                            //                               ButtonStyle(
+                                            //                             backgroundColor:
+                                            //                                 MaterialStateProperty
+                                            //                                     .all(
+                                            //                               Color.fromARGB(
+                                            //                                   255,
+                                            //                                   237,
+                                            //                                   172,
+                                            //                                   10),
+                                            //                             ),
+                                            //                           ),
+                                            //                         ),
+                                            //                       ),
+                                            //                       SizedBox(
+                                            //                           height: 20),
+                                            //                     ],
+                                            //                   ),
+                                            //                 );
+                                            //               }
+                                            //               return null;
+                                            //             },
+                                            //           ),
+                                            //         ),
+                                            //       )
+                                            //     : SizedBox(),
                                           ],
                                         ),
                                       ),
@@ -1048,6 +1438,7 @@ class _BookmarkedDocumentViewScreenState
                         ),
                       ),
                     ),
+                    // AdvancedSearchBox(_isAdvanceSearchVisible),
                   ],
                 ),
               ],
@@ -1067,6 +1458,9 @@ class _BookmarkedDocumentViewScreenState
 
     var musicDir = await ExternalPath.getExternalStoragePublicDirectory(
         ExternalPath.DIRECTORY_MUSIC);
+
+    var videoDir = await ExternalPath.getExternalStoragePublicDirectory(
+        ExternalPath.DIRECTORY_MOVIES);
 
     if (mimeType == 'image/jpg') {
       ImageGallerySaver.saveImage(bytesImage!);
@@ -1101,10 +1495,7 @@ class _BookmarkedDocumentViewScreenState
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            'Image downloaded successfully..',
-            textScaler: TextScaler.linear(1),
-          ),
+          content: Text('Image downloaded successfully..'),
         ),
       );
     } else if (mimeType == 'image/gif') {
@@ -1116,10 +1507,7 @@ class _BookmarkedDocumentViewScreenState
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            'Image downloaded successfully..',
-            textScaler: TextScaler.linear(1),
-          ),
+          content: Text('Image downloaded successfully..'),
         ),
       );
     } else if (mimeType == 'application/pdf') {
@@ -1129,10 +1517,7 @@ class _BookmarkedDocumentViewScreenState
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            'PDF file downloaded successfully..',
-            textScaler: TextScaler.linear(1),
-          ),
+          content: Text('PDF file downloaded successfully..'),
         ),
       );
     } else if (mimeType == 'text/plain') {
@@ -1142,10 +1527,7 @@ class _BookmarkedDocumentViewScreenState
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            'Text file downloaded successfully..',
-            textScaler: TextScaler.linear(1),
-          ),
+          content: Text('Text file downloaded successfully..'),
         ),
       );
     } else if (mimeType == 'text/csv') {
@@ -1155,10 +1537,7 @@ class _BookmarkedDocumentViewScreenState
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            'CSV file downloaded successfully..',
-            textScaler: TextScaler.linear(1),
-          ),
+          content: Text('CSV file downloaded successfully..'),
         ),
       );
     } else if (mimeType == 'audio/mpeg') {
@@ -1168,10 +1547,17 @@ class _BookmarkedDocumentViewScreenState
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            'Mp3 file downloaded successfully..',
-            textScaler: TextScaler.linear(1),
-          ),
+          content: Text('Mp3 file downloaded successfully..'),
+        ),
+      );
+    } else if (mimeType == 'video/mp4') {
+      File file4 = File('$videoDir/$documentId.mp4');
+      List<int> mp3Bytes = base64.decode(metadata);
+      await file4.writeAsBytes(mp3Bytes);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Mp3 file downloaded successfully..'),
         ),
       );
     }
@@ -1183,42 +1569,43 @@ class _BookmarkedDocumentViewScreenState
       child: Row(
         // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          // Container(
-          //   decoration: BoxDecoration(
-          //     borderRadius: BorderRadius.circular(5),
-          //     color: Color.fromARGB(179, 1, 1, 36),
-          //   ),
-          //   width: Responsive.isMobileSmall(context) ||
-          //           Responsive.isMobileMedium(context) ||
-          //           Responsive.isMobileLarge(context)
-          //       ? 35
-          //       : Responsive.isTabletPortrait(context)
-          //           ? 45
-          //           : 45,
-          //   height: Responsive.isMobileSmall(context) ||
-          //           Responsive.isMobileMedium(context) ||
-          //           Responsive.isMobileLarge(context)
-          //       ? 30
-          //       : Responsive.isTabletPortrait(context)
-          //           ? 40
-          //           : 40,
-          //   child: IconButton(
-          //     padding: EdgeInsets.zero,
-          //     onPressed: () {
-          //     },
-          //     icon: Icon(
-          //       Icons.shopping_cart_rounded,
-          //       color: Colors.white,
-          //       size: Responsive.isMobileSmall(context) ||
-          //               Responsive.isMobileMedium(context) ||
-          //               Responsive.isMobileLarge(context)
-          //           ? 18
-          //           : Responsive.isTabletPortrait(context)
-          //               ? 25
-          //               : 25,
-          //     ),
-          //   ),
-          // ),
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: Color.fromARGB(179, 1, 1, 36),
+            ),
+            width: Responsive.isMobileSmall(context) ||
+                    Responsive.isMobileMedium(context) ||
+                    Responsive.isMobileLarge(context)
+                ? 35
+                : Responsive.isTabletPortrait(context)
+                    ? 45
+                    : 45,
+            height: Responsive.isMobileSmall(context) ||
+                    Responsive.isMobileMedium(context) ||
+                    Responsive.isMobileLarge(context)
+                ? 30
+                : Responsive.isTabletPortrait(context)
+                    ? 40
+                    : 40,
+            child: IconButton(
+              padding: EdgeInsets.zero,
+              onPressed: () {
+                // print(widget.fileNames[fileIndex]['ImageId']);
+              },
+              icon: Icon(
+                Icons.shopping_cart_rounded,
+                color: Colors.white,
+                size: Responsive.isMobileSmall(context) ||
+                        Responsive.isMobileMedium(context) ||
+                        Responsive.isMobileLarge(context)
+                    ? 18
+                    : Responsive.isTabletPortrait(context)
+                        ? 25
+                        : 25,
+              ),
+            ),
+          ),
           // Container(
           //   margin: EdgeInsets.only(left: 5),
           //   decoration: BoxDecoration(
@@ -1255,7 +1642,6 @@ class _BookmarkedDocumentViewScreenState
           //     ),
           //   ),
           // ),
-
           Container(
             margin: EdgeInsets.only(left: 5),
             decoration: BoxDecoration(
@@ -1294,151 +1680,150 @@ class _BookmarkedDocumentViewScreenState
               ),
             ),
           ),
-          // Container(
-          //   margin: EdgeInsets.only(left: 5),
-          //   decoration: BoxDecoration(
-          //     borderRadius: BorderRadius.circular(5),
-          //     color: Color.fromARGB(179, 1, 1, 36),
-          //   ),
-          //   width: Responsive.isMobileSmall(context) ||
-          //           Responsive.isMobileMedium(context) ||
-          //           Responsive.isMobileLarge(context)
-          //       ? 35
-          //       : Responsive.isTabletPortrait(context)
-          //           ? 45
-          //           : 45,
-          //   height: Responsive.isMobileSmall(context) ||
-          //           Responsive.isMobileMedium(context) ||
-          //           Responsive.isMobileLarge(context)
-          //       ? 30
-          //       : Responsive.isTabletPortrait(context)
-          //           ? 40
-          //           : 40,
-          //   child: IconButton(
-          //     padding: EdgeInsets.zero,
-          //     onPressed: () {},
-          //     icon: Icon(
-          //       Icons.print_outlined,
-          //       color: Colors.white,
-          //       size: Responsive.isMobileSmall(context) ||
-          //               Responsive.isMobileMedium(context) ||
-          //               Responsive.isMobileLarge(context)
-          //           ? 20
-          //           : Responsive.isTabletPortrait(context)
-          //               ? 27
-          //               : 27,
-          //     ),
-          //   ),
-          // ),
-          // Container(
-          //   margin: EdgeInsets.only(left: 5),
-          //   decoration: BoxDecoration(
-          //     borderRadius: BorderRadius.circular(5),
-          //     color: Color.fromARGB(179, 1, 1, 36),
-          //   ),
-          //   width: Responsive.isMobileSmall(context) ||
-          //           Responsive.isMobileMedium(context) ||
-          //           Responsive.isMobileLarge(context)
-          //       ? 35
-          //       : Responsive.isTabletPortrait(context)
-          //           ? 45
-          //           : 45,
-          //   height: Responsive.isMobileSmall(context) ||
-          //           Responsive.isMobileMedium(context) ||
-          //           Responsive.isMobileLarge(context)
-          //       ? 30
-          //       : Responsive.isTabletPortrait(context)
-          //           ? 40
-          //           : 40,
-          //   child: IconButton(
-          //     padding: EdgeInsets.zero,
-          //     onPressed: () {},
-          //     icon: Icon(
-          //       Icons.delete_rounded,
-          //       color: Colors.white,
-          //       size: Responsive.isMobileSmall(context) ||
-          //               Responsive.isMobileMedium(context) ||
-          //               Responsive.isMobileLarge(context)
-          //           ? 20
-          //           : Responsive.isTabletPortrait(context)
-          //               ? 27
-          //               : 27,
-          //     ),
-          //   ),
-          // ),
-          // Container(
-          //   margin: EdgeInsets.only(left: 5),
-          //   decoration: BoxDecoration(
-          //     borderRadius: BorderRadius.circular(5),
-          //     color: Color.fromARGB(179, 1, 1, 36),
-          //   ),
-          //   width: Responsive.isMobileSmall(context) ||
-          //           Responsive.isMobileMedium(context) ||
-          //           Responsive.isMobileLarge(context)
-          //       ? 35
-          //       : Responsive.isTabletPortrait(context)
-          //           ? 45
-          //           : 45,
-          //   height: Responsive.isMobileSmall(context) ||
-          //           Responsive.isMobileMedium(context) ||
-          //           Responsive.isMobileLarge(context)
-          //       ? 30
-          //       : Responsive.isTabletPortrait(context)
-          //           ? 40
-          //           : 40,
-          //   child: IconButton(
-          //     padding: EdgeInsets.zero,
-          //     onPressed: () {},
-          //     icon: Icon(
-          //       Icons.file_open_outlined,
-          //       color: Colors.white,
-          //       size: Responsive.isMobileSmall(context) ||
-          //               Responsive.isMobileMedium(context) ||
-          //               Responsive.isMobileLarge(context)
-          //           ? 20
-          //           : Responsive.isTabletPortrait(context)
-          //               ? 27
-          //               : 27,
-          //     ),
-          //   ),
-          // ),
-          // Container(
-          //   margin: EdgeInsets.only(left: 5),
-          //   decoration: BoxDecoration(
-          //     borderRadius: BorderRadius.circular(5),
-          //     color: Color.fromARGB(179, 1, 1, 36),
-          //   ),
-          //   width: Responsive.isMobileSmall(context) ||
-          //           Responsive.isMobileMedium(context) ||
-          //           Responsive.isMobileLarge(context)
-          //       ? 35
-          //       : Responsive.isTabletPortrait(context)
-          //           ? 45
-          //           : 45,
-          //   height: Responsive.isMobileSmall(context) ||
-          //           Responsive.isMobileMedium(context) ||
-          //           Responsive.isMobileLarge(context)
-          //       ? 30
-          //       : Responsive.isTabletPortrait(context)
-          //           ? 40
-          //           : 40,
-          //   child: IconButton(
-          //     padding: EdgeInsets.zero,
-          //     onPressed: () {},
-          //     icon: Icon(
-          //       Icons.feed_outlined,
-          //       color: Colors.white,
-          //       size: Responsive.isMobileSmall(context) ||
-          //               Responsive.isMobileMedium(context) ||
-          //               Responsive.isMobileLarge(context)
-          //           ? 23
-          //           : Responsive.isTabletPortrait(context)
-          //               ? 29
-          //               : 29,
-          //     ),
-          //   ),
-          // ),
-
+          Container(
+            margin: EdgeInsets.only(left: 5),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: Color.fromARGB(179, 1, 1, 36),
+            ),
+            width: Responsive.isMobileSmall(context) ||
+                    Responsive.isMobileMedium(context) ||
+                    Responsive.isMobileLarge(context)
+                ? 35
+                : Responsive.isTabletPortrait(context)
+                    ? 45
+                    : 45,
+            height: Responsive.isMobileSmall(context) ||
+                    Responsive.isMobileMedium(context) ||
+                    Responsive.isMobileLarge(context)
+                ? 30
+                : Responsive.isTabletPortrait(context)
+                    ? 40
+                    : 40,
+            child: IconButton(
+              padding: EdgeInsets.zero,
+              onPressed: () {},
+              icon: Icon(
+                Icons.print_outlined,
+                color: Colors.white,
+                size: Responsive.isMobileSmall(context) ||
+                        Responsive.isMobileMedium(context) ||
+                        Responsive.isMobileLarge(context)
+                    ? 20
+                    : Responsive.isTabletPortrait(context)
+                        ? 27
+                        : 27,
+              ),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(left: 5),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: Color.fromARGB(179, 1, 1, 36),
+            ),
+            width: Responsive.isMobileSmall(context) ||
+                    Responsive.isMobileMedium(context) ||
+                    Responsive.isMobileLarge(context)
+                ? 35
+                : Responsive.isTabletPortrait(context)
+                    ? 45
+                    : 45,
+            height: Responsive.isMobileSmall(context) ||
+                    Responsive.isMobileMedium(context) ||
+                    Responsive.isMobileLarge(context)
+                ? 30
+                : Responsive.isTabletPortrait(context)
+                    ? 40
+                    : 40,
+            child: IconButton(
+              padding: EdgeInsets.zero,
+              onPressed: () {},
+              icon: Icon(
+                Icons.delete_rounded,
+                color: Colors.white,
+                size: Responsive.isMobileSmall(context) ||
+                        Responsive.isMobileMedium(context) ||
+                        Responsive.isMobileLarge(context)
+                    ? 20
+                    : Responsive.isTabletPortrait(context)
+                        ? 27
+                        : 27,
+              ),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(left: 5),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: Color.fromARGB(179, 1, 1, 36),
+            ),
+            width: Responsive.isMobileSmall(context) ||
+                    Responsive.isMobileMedium(context) ||
+                    Responsive.isMobileLarge(context)
+                ? 35
+                : Responsive.isTabletPortrait(context)
+                    ? 45
+                    : 45,
+            height: Responsive.isMobileSmall(context) ||
+                    Responsive.isMobileMedium(context) ||
+                    Responsive.isMobileLarge(context)
+                ? 30
+                : Responsive.isTabletPortrait(context)
+                    ? 40
+                    : 40,
+            child: IconButton(
+              padding: EdgeInsets.zero,
+              onPressed: () {},
+              icon: Icon(
+                Icons.file_open_outlined,
+                color: Colors.white,
+                size: Responsive.isMobileSmall(context) ||
+                        Responsive.isMobileMedium(context) ||
+                        Responsive.isMobileLarge(context)
+                    ? 20
+                    : Responsive.isTabletPortrait(context)
+                        ? 27
+                        : 27,
+              ),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(left: 5),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: Color.fromARGB(179, 1, 1, 36),
+            ),
+            width: Responsive.isMobileSmall(context) ||
+                    Responsive.isMobileMedium(context) ||
+                    Responsive.isMobileLarge(context)
+                ? 35
+                : Responsive.isTabletPortrait(context)
+                    ? 45
+                    : 45,
+            height: Responsive.isMobileSmall(context) ||
+                    Responsive.isMobileMedium(context) ||
+                    Responsive.isMobileLarge(context)
+                ? 30
+                : Responsive.isTabletPortrait(context)
+                    ? 40
+                    : 40,
+            child: IconButton(
+              padding: EdgeInsets.zero,
+              onPressed: () {},
+              icon: Icon(
+                Icons.feed_outlined,
+                color: Colors.white,
+                size: Responsive.isMobileSmall(context) ||
+                        Responsive.isMobileMedium(context) ||
+                        Responsive.isMobileLarge(context)
+                    ? 23
+                    : Responsive.isTabletPortrait(context)
+                        ? 29
+                        : 29,
+              ),
+            ),
+          ),
           Container(
             margin: EdgeInsets.only(left: 5),
             decoration: BoxDecoration(
@@ -1497,6 +1882,176 @@ class _BookmarkedDocumentViewScreenState
     );
   }
 
+  // Widget displayIconsBar() {
+  //   return SingleChildScrollView(
+  //     scrollDirection: Axis.horizontal,
+  //     child: Row(
+  //       children: <Widget>[
+  //         Container(
+  //           decoration: BoxDecoration(
+  //             borderRadius: BorderRadius.circular(5),
+  //             color: Color.fromARGB(179, 1, 1, 36),
+  //           ),
+  //           width: 36,
+  //           height: 32,
+  //           child: IconButton(
+  //             padding: EdgeInsets.zero,
+  //             onPressed: () {
+  //               // print(widget.fileNames[fileIndex]['ImageId']);
+  //             },
+  //             icon: Icon(
+  //               Icons.shopping_cart_rounded,
+  //               color: Colors.white,
+  //               size: 18,
+  //             ),
+  //           ),
+  //         ),
+  //         Container(
+  //           margin: EdgeInsets.only(left: 5),
+  //           decoration: BoxDecoration(
+  //             borderRadius: BorderRadius.circular(5),
+  //             color: Color.fromARGB(179, 1, 1, 36),
+  //           ),
+  //           width: 36,
+  //           height: 32,
+  //           child: IconButton(
+  //             padding: EdgeInsets.zero,
+  //             onPressed: () {},
+  //             icon: Icon(
+  //               Icons.note_alt_outlined,
+  //               color: Colors.white,
+  //               size: 20,
+  //             ),
+  //           ),
+  //         ),
+  //         Container(
+  //           margin: EdgeInsets.only(left: 5),
+  //           decoration: BoxDecoration(
+  //             borderRadius: BorderRadius.circular(5),
+  //             color: Color.fromARGB(179, 1, 1, 36),
+  //           ),
+  //           width: 36,
+  //           height: 32,
+  //           child: IconButton(
+  //             padding: EdgeInsets.zero,
+  //             onPressed: () {
+  //               downloadFileToStorage();
+  //             },
+  //             icon: Icon(
+  //               Icons.file_download,
+  //               color: Colors.white,
+  //               size: 20,
+  //             ),
+  //           ),
+  //         ),
+  //         Container(
+  //           margin: EdgeInsets.only(left: 5),
+  //           decoration: BoxDecoration(
+  //             borderRadius: BorderRadius.circular(5),
+  //             color: Color.fromARGB(179, 1, 1, 36),
+  //           ),
+  //           width: 36,
+  //           height: 32,
+  //           child: IconButton(
+  //             padding: EdgeInsets.zero,
+  //             onPressed: () {},
+  //             icon: Icon(
+  //               Icons.print_outlined,
+  //               color: Colors.white,
+  //               size: 20,
+  //             ),
+  //           ),
+  //         ),
+  //         Container(
+  //           margin: EdgeInsets.only(left: 5),
+  //           decoration: BoxDecoration(
+  //             borderRadius: BorderRadius.circular(5),
+  //             color: Color.fromARGB(179, 1, 1, 36),
+  //           ),
+  //           width: 36,
+  //           height: 32,
+  //           child: IconButton(
+  //             padding: EdgeInsets.zero,
+  //             onPressed: () {},
+  //             icon: Icon(
+  //               Icons.delete_rounded,
+  //               color: Colors.white,
+  //               size: 20,
+  //             ),
+  //           ),
+  //         ),
+  //         Container(
+  //           margin: EdgeInsets.only(left: 5),
+  //           decoration: BoxDecoration(
+  //             borderRadius: BorderRadius.circular(5),
+  //             color: Color.fromARGB(179, 1, 1, 36),
+  //           ),
+  //           width: 36,
+  //           height: 32,
+  //           child: IconButton(
+  //             padding: EdgeInsets.zero,
+  //             onPressed: () {},
+  //             icon: Icon(
+  //               Icons.file_open_outlined,
+  //               color: Colors.white,
+  //               size: 20,
+  //             ),
+  //           ),
+  //         ),
+  //         Container(
+  //           margin: EdgeInsets.only(left: 5),
+  //           decoration: BoxDecoration(
+  //             borderRadius: BorderRadius.circular(5),
+  //             color: Color.fromARGB(179, 1, 1, 36),
+  //           ),
+  //           width: 36,
+  //           height: 32,
+  //           child: IconButton(
+  //             padding: EdgeInsets.zero,
+  //             onPressed: () {},
+  //             icon: Icon(
+  //               Icons.feed_outlined,
+  //               color: Colors.white,
+  //               size: 23,
+  //             ),
+  //           ),
+  //         ),
+  //         Container(
+  //           margin: EdgeInsets.only(left: 5),
+  //           decoration: BoxDecoration(
+  //             borderRadius: BorderRadius.circular(5),
+  //             color: Color.fromARGB(179, 1, 1, 36),
+  //           ),
+  //           width: 36,
+  //           height: 32,
+  //           child: IconButton(
+  //             padding: EdgeInsets.zero,
+  //             onPressed: () {
+  //               if (!isBookMarked) {
+  //                 setState(() {
+  //                   addBookMarkDocument();
+  //                   isBookMarked = true;
+  //                 });
+  //               }
+  //             },
+  //             icon: isBookMarked
+  //                 ? Icon(
+  //                     Icons.star,
+  //                     color: Colors.amber,
+  //                     size: 22,
+  //                   )
+  //                 : Icon(
+  //                     Icons.star_border,
+  //                     color: Colors.white,
+  //                     size: 22,
+  //                   ),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
   // -------- PROCESS MP3 ------------//
   Future<void> setAudio() async {
     audioplayer.setReleaseMode(ReleaseMode.stop);
@@ -1544,23 +2099,21 @@ class _BookmarkedDocumentViewScreenState
   }
 
   Future<File> _getPDFFile() async {
-    var random = Random.secure();
-    var randomInt = random.nextInt(10000);
     Directory tempDir = await getTemporaryDirectory();
-    _pdffile = File('${tempDir.path}/sample_$randomInt.pdf');
+    _pdffile = File('${tempDir.path}/sample.pdf');
     List<int> imageValueBytes = base64.decode(metadata);
     await _pdffile!.writeAsBytes(imageValueBytes);
-    print('PDF file written to ${_pdffile!.path}');
     return _pdffile!;
   }
 
-  Widget displayFile(String mimetype) {
+  Widget displayFile(String mimetype2) {
     Size size = MediaQuery.of(context).size;
+    print("updated mimetype is $mimetype2");
 
-    if (mimeType == 'image/jpg' ||
-        mimeType == 'image/jpeg' ||
-        mimeType == 'image/png' ||
-        mimeType == 'image/gif') {
+    if (mimetype2 == 'image/jpg' ||
+        mimetype2 == 'image/jpeg' ||
+        mimetype2 == 'image/png' ||
+        mimetype2 == 'image/gif') {
       return SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Image.memory(
@@ -1568,14 +2121,15 @@ class _BookmarkedDocumentViewScreenState
           fit: BoxFit.fill,
         ),
       );
-    } else if (mimeType == 'application/pdf') {
+    } else if (mimetype2 == 'application/pdf') {
       return FutureBuilder<File>(
         future: _getPDFFile(),
         builder: (context, snapshot) {
           if (snapshot.hasData && snapshot.data != null) {
             return SfPdfViewer.file(
               _pdffile!,
-              key: _pdfViewerKey,
+              canShowScrollHead: true,
+              canShowScrollStatus: true,
               canShowPaginationDialog: false,
             );
           } else if (snapshot.hasError) {
@@ -1585,7 +2139,7 @@ class _BookmarkedDocumentViewScreenState
           }
         },
       );
-    } else if (mimeType == 'text/plain') {
+    } else if (mimetype2 == 'text/plain') {
       final fileContent = utf8.decode(base64.decode(metadata));
       final htmlData = '''
       <html>
@@ -1600,7 +2154,7 @@ class _BookmarkedDocumentViewScreenState
       return SingleChildScrollView(
         child: Html(data: htmlData),
       );
-    } else if (mimeType == 'text/csv') {
+    } else if (mimetype2 == 'text/csv') {
       final csvBytes = base64Decode(metadata);
       final decodedCsv = utf8.decode(csvBytes);
       final csvData = CsvToListConverter().convert(decodedCsv);
@@ -1637,12 +2191,12 @@ class _BookmarkedDocumentViewScreenState
           ),
         ),
       );
-    } else if (mimeType == 'video/mp4') {
+    } else if (mimetype2 == 'video/mp4') {
       if (_videoPlayerController != null &&
           _videoPlayerController!.value.isInitialized) {
         return Chewie(controller: _chewieController!);
       }
-    } else if (mimeType == 'audio/mpeg' || mimeType == 'audio/x-wav') {
+    } else if (mimetype2 == 'audio/mpeg' || mimetype2 == 'audio/x-wav') {
       setAudio();
       return Container(
         color: Colors.white,

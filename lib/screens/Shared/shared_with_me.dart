@@ -3,6 +3,7 @@ import 'package:auradocs_android/Bloc/document_bloc.dart';
 import 'package:auradocs_android/Bloc/document_event.dart';
 import 'package:auradocs_android/Bloc/document_state.dart';
 import 'package:auradocs_android/Models/users.dart';
+import 'package:auradocs_android/screens/Document-Search/search_list.dart';
 import 'package:auradocs_android/screens/Shared/shared_docs_viewer.dart';
 import 'package:auradocs_android/screens/Sliders/landing_page.dart';
 import 'package:auradocs_android/screens/home_screen.dart';
@@ -735,19 +736,19 @@ class _SharedWithMeState extends State<SharedWithMe> {
                         final dynamic tooltip = _toolTipKey.currentState;
                         tooltip?.ensureTooltipVisible();
                       } else {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) {
-                        //       return BlocProvider(
-                        //         create: (context) =>
-                        //             DocumentBloc(username, token),
-                        //         child: SearchedDocumentListScreen(
-                        //             searchValue: trimmedValue),
-                        //       );
-                        //     },
-                        //   ),
-                        // );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return BlocProvider(
+                                create: (context) =>
+                                    DocumentBloc(username, token),
+                                child: SearchedDocumentListScreen(
+                                    searchValue: trimmedValue),
+                              );
+                            },
+                          ),
+                        );
                       }
                     },
                     child: Tooltip(

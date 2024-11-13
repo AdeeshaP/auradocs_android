@@ -52,6 +52,39 @@ class FavoriteListLoaded extends DocumentState {
   FavoriteListLoaded({this.bookmarks, this.totalPages});
 }
 
+// SearchDocumentLoaded state to only update specific fields for search docs
+
+class PartialSearchDocumentLoaded extends DocumentState {
+  final List<dynamic>? searchDocs;
+  final int? totalPages;
+
+  PartialSearchDocumentLoaded({
+    this.searchDocs,
+    this.totalPages,
+  });
+
+  SearchDocumentLoaded mergeWith(SearchDocumentLoaded existingState) {
+    return SearchDocumentLoaded(
+      searchDocs: searchDocs ?? existingState.searchDocs,
+      totalPages: totalPages ?? existingState.totalPages,
+    );
+  }
+}
+
+class SearchDocumentLoaded extends DocumentState {
+  final List<dynamic>? searchDocs;
+  final int? totalPages;
+
+  SearchDocumentLoaded({this.searchDocs, this.totalPages});
+}
+
+class AdvancedSearchedListLoaded extends DocumentState {
+  final List<dynamic>? documents;
+  final int? totalPages;
+
+  AdvancedSearchedListLoaded({this.documents, this.totalPages});
+}
+
 class DocumentError extends DocumentState {
   final String message;
 
