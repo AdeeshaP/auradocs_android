@@ -32,3 +32,17 @@ class FetchAdvancedeSearchDocuments extends DocumentEvent {
   FetchAdvancedeSearchDocuments(this.searchValue, this.templateName,
       this.templateId, this.fieldId, this.token);
 }
+
+class FetchPendingDocumentsToIndex extends DocumentEvent {
+  final String username;
+  final String token;
+
+  FetchPendingDocumentsToIndex(this.username, this.token);
+}
+
+class FetchTemplateDropdown extends DocumentEvent {
+  final String username;
+  final String token;
+
+  FetchTemplateDropdown(this.username, this.token);
+}

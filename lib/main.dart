@@ -96,15 +96,8 @@ class MyApp extends StatelessWidget {
   MyApp(this.storage, this.usr, this.tokn, this.code, this.authetication,
       this.sharedMedia2);
 
-  // This widget is the root of your application.
-
   @override
   Widget build(BuildContext context) {
-    print("tokn $tokn");
-    print("usr $usr");
-    print("code $code");
-    print("sharedMedia2 $sharedMedia2");
-
     if (tokn == "" && usr == "" && code == "" && sharedMedia2 == null) {
       return MaterialApp(
         builder: (BuildContext context, Widget? child) {

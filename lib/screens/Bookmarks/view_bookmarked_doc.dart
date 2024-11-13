@@ -1181,81 +1181,79 @@ class _BookmarkedDocumentViewScreenState
     return SingleChildScrollView(
       scrollDirection: scrollDirection,
       child: Row(
-        // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          // Container(
-          //   decoration: BoxDecoration(
-          //     borderRadius: BorderRadius.circular(5),
-          //     color: Color.fromARGB(179, 1, 1, 36),
-          //   ),
-          //   width: Responsive.isMobileSmall(context) ||
-          //           Responsive.isMobileMedium(context) ||
-          //           Responsive.isMobileLarge(context)
-          //       ? 35
-          //       : Responsive.isTabletPortrait(context)
-          //           ? 45
-          //           : 45,
-          //   height: Responsive.isMobileSmall(context) ||
-          //           Responsive.isMobileMedium(context) ||
-          //           Responsive.isMobileLarge(context)
-          //       ? 30
-          //       : Responsive.isTabletPortrait(context)
-          //           ? 40
-          //           : 40,
-          //   child: IconButton(
-          //     padding: EdgeInsets.zero,
-          //     onPressed: () {
-          //     },
-          //     icon: Icon(
-          //       Icons.shopping_cart_rounded,
-          //       color: Colors.white,
-          //       size: Responsive.isMobileSmall(context) ||
-          //               Responsive.isMobileMedium(context) ||
-          //               Responsive.isMobileLarge(context)
-          //           ? 18
-          //           : Responsive.isTabletPortrait(context)
-          //               ? 25
-          //               : 25,
-          //     ),
-          //   ),
-          // ),
-          // Container(
-          //   margin: EdgeInsets.only(left: 5),
-          //   decoration: BoxDecoration(
-          //     borderRadius: BorderRadius.circular(5),
-          //     color: Color.fromARGB(179, 1, 1, 36),
-          //   ),
-          //   width: Responsive.isMobileSmall(context) ||
-          //           Responsive.isMobileMedium(context) ||
-          //           Responsive.isMobileLarge(context)
-          //       ? 35
-          //       : Responsive.isTabletPortrait(context)
-          //           ? 45
-          //           : 45,
-          //   height: Responsive.isMobileSmall(context) ||
-          //           Responsive.isMobileMedium(context) ||
-          //           Responsive.isMobileLarge(context)
-          //       ? 30
-          //       : Responsive.isTabletPortrait(context)
-          //           ? 40
-          //           : 40,
-          //   child: IconButton(
-          //     padding: EdgeInsets.zero,
-          //     onPressed: () {},
-          //     icon: Icon(
-          //       Icons.note_alt_outlined,
-          //       color: Colors.white,
-          //       size: Responsive.isMobileSmall(context) ||
-          //               Responsive.isMobileMedium(context) ||
-          //               Responsive.isMobileLarge(context)
-          //           ? 20
-          //           : Responsive.isTabletPortrait(context)
-          //               ? 27
-          //               : 27,
-          //     ),
-          //   ),
-          // ),
-
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: Color.fromARGB(179, 1, 1, 36),
+            ),
+            width: Responsive.isMobileSmall(context) ||
+                    Responsive.isMobileMedium(context) ||
+                    Responsive.isMobileLarge(context)
+                ? 35
+                : Responsive.isTabletPortrait(context)
+                    ? 45
+                    : 45,
+            height: Responsive.isMobileSmall(context) ||
+                    Responsive.isMobileMedium(context) ||
+                    Responsive.isMobileLarge(context)
+                ? 30
+                : Responsive.isTabletPortrait(context)
+                    ? 40
+                    : 40,
+            child: IconButton(
+              padding: EdgeInsets.zero,
+              onPressed: () {},
+              icon: Icon(
+                Icons.shopping_cart_rounded,
+                color: Colors.white,
+                size: Responsive.isMobileSmall(context) ||
+                        Responsive.isMobileMedium(context) ||
+                        Responsive.isMobileLarge(context)
+                    ? 18
+                    : Responsive.isTabletPortrait(context)
+                        ? 25
+                        : 25,
+              ),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(left: 5),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: Color.fromARGB(179, 1, 1, 36),
+            ),
+            width: Responsive.isMobileSmall(context) ||
+                    Responsive.isMobileMedium(context) ||
+                    Responsive.isMobileLarge(context)
+                ? 35
+                : Responsive.isTabletPortrait(context)
+                    ? 45
+                    : 45,
+            height: Responsive.isMobileSmall(context) ||
+                    Responsive.isMobileMedium(context) ||
+                    Responsive.isMobileLarge(context)
+                ? 30
+                : Responsive.isTabletPortrait(context)
+                    ? 40
+                    : 40,
+            child: IconButton(
+              padding: EdgeInsets.zero,
+              onPressed: () {},
+              icon: Icon(
+                Icons.note_alt_outlined,
+                color: Colors.white,
+                size: Responsive.isMobileSmall(context) ||
+                        Responsive.isMobileMedium(context) ||
+                        Responsive.isMobileLarge(context)
+                    ? 20
+                    : Responsive.isTabletPortrait(context)
+                        ? 27
+                        : 27,
+              ),
+            ),
+          ),
           Container(
             margin: EdgeInsets.only(left: 5),
             decoration: BoxDecoration(
@@ -1294,151 +1292,150 @@ class _BookmarkedDocumentViewScreenState
               ),
             ),
           ),
-          // Container(
-          //   margin: EdgeInsets.only(left: 5),
-          //   decoration: BoxDecoration(
-          //     borderRadius: BorderRadius.circular(5),
-          //     color: Color.fromARGB(179, 1, 1, 36),
-          //   ),
-          //   width: Responsive.isMobileSmall(context) ||
-          //           Responsive.isMobileMedium(context) ||
-          //           Responsive.isMobileLarge(context)
-          //       ? 35
-          //       : Responsive.isTabletPortrait(context)
-          //           ? 45
-          //           : 45,
-          //   height: Responsive.isMobileSmall(context) ||
-          //           Responsive.isMobileMedium(context) ||
-          //           Responsive.isMobileLarge(context)
-          //       ? 30
-          //       : Responsive.isTabletPortrait(context)
-          //           ? 40
-          //           : 40,
-          //   child: IconButton(
-          //     padding: EdgeInsets.zero,
-          //     onPressed: () {},
-          //     icon: Icon(
-          //       Icons.print_outlined,
-          //       color: Colors.white,
-          //       size: Responsive.isMobileSmall(context) ||
-          //               Responsive.isMobileMedium(context) ||
-          //               Responsive.isMobileLarge(context)
-          //           ? 20
-          //           : Responsive.isTabletPortrait(context)
-          //               ? 27
-          //               : 27,
-          //     ),
-          //   ),
-          // ),
-          // Container(
-          //   margin: EdgeInsets.only(left: 5),
-          //   decoration: BoxDecoration(
-          //     borderRadius: BorderRadius.circular(5),
-          //     color: Color.fromARGB(179, 1, 1, 36),
-          //   ),
-          //   width: Responsive.isMobileSmall(context) ||
-          //           Responsive.isMobileMedium(context) ||
-          //           Responsive.isMobileLarge(context)
-          //       ? 35
-          //       : Responsive.isTabletPortrait(context)
-          //           ? 45
-          //           : 45,
-          //   height: Responsive.isMobileSmall(context) ||
-          //           Responsive.isMobileMedium(context) ||
-          //           Responsive.isMobileLarge(context)
-          //       ? 30
-          //       : Responsive.isTabletPortrait(context)
-          //           ? 40
-          //           : 40,
-          //   child: IconButton(
-          //     padding: EdgeInsets.zero,
-          //     onPressed: () {},
-          //     icon: Icon(
-          //       Icons.delete_rounded,
-          //       color: Colors.white,
-          //       size: Responsive.isMobileSmall(context) ||
-          //               Responsive.isMobileMedium(context) ||
-          //               Responsive.isMobileLarge(context)
-          //           ? 20
-          //           : Responsive.isTabletPortrait(context)
-          //               ? 27
-          //               : 27,
-          //     ),
-          //   ),
-          // ),
-          // Container(
-          //   margin: EdgeInsets.only(left: 5),
-          //   decoration: BoxDecoration(
-          //     borderRadius: BorderRadius.circular(5),
-          //     color: Color.fromARGB(179, 1, 1, 36),
-          //   ),
-          //   width: Responsive.isMobileSmall(context) ||
-          //           Responsive.isMobileMedium(context) ||
-          //           Responsive.isMobileLarge(context)
-          //       ? 35
-          //       : Responsive.isTabletPortrait(context)
-          //           ? 45
-          //           : 45,
-          //   height: Responsive.isMobileSmall(context) ||
-          //           Responsive.isMobileMedium(context) ||
-          //           Responsive.isMobileLarge(context)
-          //       ? 30
-          //       : Responsive.isTabletPortrait(context)
-          //           ? 40
-          //           : 40,
-          //   child: IconButton(
-          //     padding: EdgeInsets.zero,
-          //     onPressed: () {},
-          //     icon: Icon(
-          //       Icons.file_open_outlined,
-          //       color: Colors.white,
-          //       size: Responsive.isMobileSmall(context) ||
-          //               Responsive.isMobileMedium(context) ||
-          //               Responsive.isMobileLarge(context)
-          //           ? 20
-          //           : Responsive.isTabletPortrait(context)
-          //               ? 27
-          //               : 27,
-          //     ),
-          //   ),
-          // ),
-          // Container(
-          //   margin: EdgeInsets.only(left: 5),
-          //   decoration: BoxDecoration(
-          //     borderRadius: BorderRadius.circular(5),
-          //     color: Color.fromARGB(179, 1, 1, 36),
-          //   ),
-          //   width: Responsive.isMobileSmall(context) ||
-          //           Responsive.isMobileMedium(context) ||
-          //           Responsive.isMobileLarge(context)
-          //       ? 35
-          //       : Responsive.isTabletPortrait(context)
-          //           ? 45
-          //           : 45,
-          //   height: Responsive.isMobileSmall(context) ||
-          //           Responsive.isMobileMedium(context) ||
-          //           Responsive.isMobileLarge(context)
-          //       ? 30
-          //       : Responsive.isTabletPortrait(context)
-          //           ? 40
-          //           : 40,
-          //   child: IconButton(
-          //     padding: EdgeInsets.zero,
-          //     onPressed: () {},
-          //     icon: Icon(
-          //       Icons.feed_outlined,
-          //       color: Colors.white,
-          //       size: Responsive.isMobileSmall(context) ||
-          //               Responsive.isMobileMedium(context) ||
-          //               Responsive.isMobileLarge(context)
-          //           ? 23
-          //           : Responsive.isTabletPortrait(context)
-          //               ? 29
-          //               : 29,
-          //     ),
-          //   ),
-          // ),
-
+          Container(
+            margin: EdgeInsets.only(left: 5),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: Color.fromARGB(179, 1, 1, 36),
+            ),
+            width: Responsive.isMobileSmall(context) ||
+                    Responsive.isMobileMedium(context) ||
+                    Responsive.isMobileLarge(context)
+                ? 35
+                : Responsive.isTabletPortrait(context)
+                    ? 45
+                    : 45,
+            height: Responsive.isMobileSmall(context) ||
+                    Responsive.isMobileMedium(context) ||
+                    Responsive.isMobileLarge(context)
+                ? 30
+                : Responsive.isTabletPortrait(context)
+                    ? 40
+                    : 40,
+            child: IconButton(
+              padding: EdgeInsets.zero,
+              onPressed: () {},
+              icon: Icon(
+                Icons.print_outlined,
+                color: Colors.white,
+                size: Responsive.isMobileSmall(context) ||
+                        Responsive.isMobileMedium(context) ||
+                        Responsive.isMobileLarge(context)
+                    ? 20
+                    : Responsive.isTabletPortrait(context)
+                        ? 27
+                        : 27,
+              ),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(left: 5),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: Color.fromARGB(179, 1, 1, 36),
+            ),
+            width: Responsive.isMobileSmall(context) ||
+                    Responsive.isMobileMedium(context) ||
+                    Responsive.isMobileLarge(context)
+                ? 35
+                : Responsive.isTabletPortrait(context)
+                    ? 45
+                    : 45,
+            height: Responsive.isMobileSmall(context) ||
+                    Responsive.isMobileMedium(context) ||
+                    Responsive.isMobileLarge(context)
+                ? 30
+                : Responsive.isTabletPortrait(context)
+                    ? 40
+                    : 40,
+            child: IconButton(
+              padding: EdgeInsets.zero,
+              onPressed: () {},
+              icon: Icon(
+                Icons.delete_rounded,
+                color: Colors.white,
+                size: Responsive.isMobileSmall(context) ||
+                        Responsive.isMobileMedium(context) ||
+                        Responsive.isMobileLarge(context)
+                    ? 20
+                    : Responsive.isTabletPortrait(context)
+                        ? 27
+                        : 27,
+              ),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(left: 5),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: Color.fromARGB(179, 1, 1, 36),
+            ),
+            width: Responsive.isMobileSmall(context) ||
+                    Responsive.isMobileMedium(context) ||
+                    Responsive.isMobileLarge(context)
+                ? 35
+                : Responsive.isTabletPortrait(context)
+                    ? 45
+                    : 45,
+            height: Responsive.isMobileSmall(context) ||
+                    Responsive.isMobileMedium(context) ||
+                    Responsive.isMobileLarge(context)
+                ? 30
+                : Responsive.isTabletPortrait(context)
+                    ? 40
+                    : 40,
+            child: IconButton(
+              padding: EdgeInsets.zero,
+              onPressed: () {},
+              icon: Icon(
+                Icons.file_open_outlined,
+                color: Colors.white,
+                size: Responsive.isMobileSmall(context) ||
+                        Responsive.isMobileMedium(context) ||
+                        Responsive.isMobileLarge(context)
+                    ? 20
+                    : Responsive.isTabletPortrait(context)
+                        ? 27
+                        : 27,
+              ),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(left: 5),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: Color.fromARGB(179, 1, 1, 36),
+            ),
+            width: Responsive.isMobileSmall(context) ||
+                    Responsive.isMobileMedium(context) ||
+                    Responsive.isMobileLarge(context)
+                ? 35
+                : Responsive.isTabletPortrait(context)
+                    ? 45
+                    : 45,
+            height: Responsive.isMobileSmall(context) ||
+                    Responsive.isMobileMedium(context) ||
+                    Responsive.isMobileLarge(context)
+                ? 30
+                : Responsive.isTabletPortrait(context)
+                    ? 40
+                    : 40,
+            child: IconButton(
+              padding: EdgeInsets.zero,
+              onPressed: () {},
+              icon: Icon(
+                Icons.feed_outlined,
+                color: Colors.white,
+                size: Responsive.isMobileSmall(context) ||
+                        Responsive.isMobileMedium(context) ||
+                        Responsive.isMobileLarge(context)
+                    ? 23
+                    : Responsive.isTabletPortrait(context)
+                        ? 29
+                        : 29,
+              ),
+            ),
+          ),
           Container(
             margin: EdgeInsets.only(left: 5),
             decoration: BoxDecoration(

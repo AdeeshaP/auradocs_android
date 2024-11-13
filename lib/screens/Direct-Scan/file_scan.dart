@@ -2,7 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:auradocs_android/API-Services/api_service.dart';
+import 'package:auradocs_android/Bloc/document_bloc.dart';
 import 'package:auradocs_android/Models/users.dart';
+import 'package:auradocs_android/screens/Document-Search/search_list.dart';
 import 'package:auradocs_android/screens/Sliders/landing_page.dart';
 import 'package:auradocs_android/screens/contact_us_screen.dart';
 import 'package:auradocs_android/screens/full-screen-viewer/full_screen_viewer.dart';
@@ -10,6 +12,7 @@ import 'package:auradocs_android/screens/home_screen.dart';
 import 'package:auradocs_android/utils/constants.dart';
 import 'package:auradocs_android/utils/responsive.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:math';
 import 'package:csv/csv.dart';
@@ -26,7 +29,6 @@ import 'package:path/path.dart' as p;
 import 'package:image/image.dart' as img1;
 import 'dart:ui' as ui;
 import 'package:flutter_tesseract_ocr/flutter_tesseract_ocr.dart';
-
 import '../../utils/alert_dialogs.dart';
 
 // ignore: must_be_immutable
@@ -1950,19 +1952,19 @@ class _DirectScanState extends State<DirectScan> {
                         final dynamic tooltip = _toolTipKey.currentState;
                         tooltip?.ensureTooltipVisible();
                       } else {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) {
-                        //       return BlocProvider(
-                        //         create: (context) =>
-                        //             DocumentBloc(username, token),
-                        //         child: SearchedDocumentListScreen(
-                        //             searchValue: trimmedValue),
-                        //       );
-                        //     },
-                        //   ),
-                        // );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return BlocProvider(
+                                create: (context) =>
+                                    DocumentBloc(username, token),
+                                child: SearchedDocumentListScreen(
+                                    searchValue: trimmedValue),
+                              );
+                            },
+                          ),
+                        );
                       }
                     },
                     child: Tooltip(

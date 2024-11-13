@@ -85,6 +85,20 @@ class AdvancedSearchedListLoaded extends DocumentState {
   AdvancedSearchedListLoaded({this.documents, this.totalPages});
 }
 
+class PendingDocsLoaded extends DocumentState {
+  final List<dynamic>? pendingDocs;
+  final List<bool>? folderExpansionStates;
+
+  PendingDocsLoaded({this.pendingDocs, this.folderExpansionStates});
+}
+
+class TemplateDropdownLoaded extends DocumentState {
+  final List<Map<String, dynamic>> values;
+  final List<String> dropdownValues;
+
+  TemplateDropdownLoaded({required this.values, required this.dropdownValues});
+}
+
 class DocumentError extends DocumentState {
   final String message;
 

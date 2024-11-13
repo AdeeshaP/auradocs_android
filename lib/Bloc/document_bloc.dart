@@ -124,5 +124,59 @@ class DocumentBloc extends Bloc<DocumentEvent, DocumentState> {
       }
     });
 
+    on<FetchPendingDocumentsToIndex>((event, emit) async {
+      emit(DocumentLoading());
+      try {
+        var response =
+            await ApiService.getPendingDocuments(event.username, event.token);
+        if (response.statusCode == 200) {
+          var responsedata = jsonDecode(response.body);
+          List<dynamic> documents = responsedata?['value'] ?? [];
+
+          // Initialize folderExpansionStates2 with 'false' for each document item
+          List<bool> folderExpansionStates =
+              List.generate(documents.length, (index) => false);
+          emit(
+            PendingDocsLoaded(
+              pendingDocs: documents,
+              folderExpansionStates: folderExpansionStates,
+            ),
+          );
+        } else if (response.statusCode == 404) {
+          emit(DocumentError("No documents to index."));
+        } else if (response.statusCode == 500) {
+          emit(
+              DocumentError("Server error! Please contact the administrator."));
+        }
+      } catch (e) {
+        emit(DocumentError("An unexpected error occurred: $e"));
+      }
+    });
+
+    on<FetchTemplateDropdown>((event, emit) async {
+      emit(DocumentLoading());
+
+      try {
+        var response = await ApiService.getAvalableTemplatesLists(
+            event.username, event.token);
+
+        print("templatelist.statusCode ${response.statusCode}");
+
+        if (response.statusCode == 200) {
+          var templatelist = jsonDecode(response.body);
+          List<Map<String, dynamic>> values =
+              List<Map<String, dynamic>>.from(templatelist['value']);
+          List<String> dropdownValues =
+              values.map((e) => e.values.first.toString()).toList();
+
+          emit(TemplateDropdownLoaded(
+              values: values, dropdownValues: dropdownValues));
+        } else {
+          emit(DocumentError("Failed to load template dropdown values"));
+        }
+      } catch (e) {
+        emit(DocumentError("An error occurred: $e"));
+      }
+    });
   }
 }
