@@ -1,5 +1,7 @@
+import 'package:auradocs_android/Bloc/document_bloc.dart';
 import 'package:auradocs_android/utils/responsive.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 showProgressDialog(BuildContext context) {
@@ -124,7 +126,6 @@ showPendingDocIndexedSuccesfullyPopup(BuildContext context, String imagePath,
   );
 }
 
-
 // -------------- last Docuent Submit Popup ----------------//
 lastDocuentSubmitPopup(BuildContext context, String message, String imagePath,
     Widget yesDestination, Color color, String un, String token) {
@@ -149,14 +150,14 @@ lastDocuentSubmitPopup(BuildContext context, String message, String imagePath,
     ),
     onPressed: () async {
       Navigator.of(context, rootNavigator: true).pop('dialog');
-      // Navigator.pushReplacement(
-      //   context,
-      //   MaterialPageRoute(builder: (context) {
-      //     return BlocProvider(
-      //         create: (context) => DocumentBloc(un, token),
-      //         child: yesDestination);
-      //   }),
-      // );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) {
+          return BlocProvider(
+              create: (context) => DocumentBloc(un, token),
+              child: yesDestination);
+        }),
+      );
     },
   );
 
@@ -211,7 +212,6 @@ lastDocuentSubmitPopup(BuildContext context, String message, String imagePath,
     },
   );
 }
-
 
 // -------------- Location Popup ----------------//
 showWarningDialogPopup(BuildContext context, IconData icon, String message,

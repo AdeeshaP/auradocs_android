@@ -48,7 +48,10 @@ dependencies:
   barcode_scan2: ^4.3.3
   local_auth: ^2.3.0
   font_awesome_flutter: ^10.8.0
-  document_scanner_flutter: ^0.2.7
+  document_scanner_flutter:
+    git:
+      url: https://github.com/IgeeTheron/document_scanner_flutter
+      ref: master
   image_picker: ^1.1.2
   file_picker: ^8.1.4
   csv: ^6.0.0
@@ -61,7 +64,7 @@ dependencies:
   full_screen_image: ^2.0.0
   share_handler: ^0.0.22
   permission_handler: ^11.3.1
-  camera: ^0.11.0+2
+  camera: ^0.10.3
   image_gallery_saver: ^2.0.3
   external_path: ^2.0.1
   pdf_image_renderer: ^0.7.0
@@ -83,6 +86,11 @@ dev_dependencies:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
+flutter_icons:
+  android: true
+  ios: false
+  image_path_ios: "assets/images/app_logo2.png"
+  image_path_android: "assets/images/app_logo2.png"
 
 # The following section is specific to Flutter packages.
 flutter:
@@ -93,8 +101,11 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
+  assets:
+    - assets/icons/
+    - assets/tessdata/
+    - assets/
+    - assets/images/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

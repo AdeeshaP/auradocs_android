@@ -141,18 +141,18 @@ packages:
     dependency: "direct main"
     description:
       name: camera
-      sha256: "26ff41045772153f222ffffecba711a206f670f5834d40ebf5eed3811692f167"
+      sha256: dfa8fc5a1adaeb95e7a54d86a5bd56f4bb0e035515354c8ac6d262e35cec2ec8
       url: "https://pub.dev"
     source: hosted
-    version: "0.11.0+2"
-  camera_android_camerax:
+    version: "0.10.6"
+  camera_android:
     dependency: transitive
     description:
-      name: camera_android_camerax
-      sha256: "011be2ab0e5b3e3aa8094413fa890f8c5c5afd7cfdaef353a992047d4dab5780"
+      name: camera_android
+      sha256: "32f04948a284b71d938fe275616faf4957d07f9b3aab8021bfc8c418301a289e"
       url: "https://pub.dev"
     source: hosted
-    version: "0.6.8+2"
+    version: "0.10.9+11"
   camera_avfoundation:
     dependency: transitive
     description:
@@ -284,11 +284,12 @@ packages:
   document_scanner_flutter:
     dependency: "direct main"
     description:
-      name: document_scanner_flutter
-      sha256: "1e595ac0ab436b509df7dc66e76b9e8792278214241be963b359e21d352b0f0f"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.2.7"
+      path: "."
+      ref: master
+      resolved-ref: f054e50f13d074b3d728e12abcf25d9106401659
+      url: "https://github.com/IgeeTheron/document_scanner_flutter"
+    source: git
+    version: "0.2.6"
   dots_indicator:
     dependency: transitive
     description:
