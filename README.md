@@ -1,16 +1,10 @@
-# auradocs_android
+# auradocs_android - Flutter App
 
-A new Flutter project.
+auraDOCS is a Document Management System (DMS) designed to streamline document handling for organizations of various sizes. It caters to sectors like government, healthcare, enterprises, and non-profits, aiming to enhance productivity and data security.​
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Key Benefits:
+- Centralized Document Storage: Securely store, organize, and retrieve documents in one place.
+- Workflow Automation: Automate document approvals, reviews, and routing for better efficiency.
+- Document Search: Quickly find documents using metadata, tags, or full-text search.
+- Access Control: Role-based access ensures data confidentiality and integrity.
+- Mobile Access: View and manage your documents on the go from your mobile device.
